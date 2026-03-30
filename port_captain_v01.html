@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Ports Captain</title>
+  <style>
+    :root{
+      --bg1:#0b1f33;
+      --bg2:#12324f;
+      --panel:rgba(8,17,28,.82);
+      --panel2:rgba(12,25,41,.93);
+      --panel-border:rgba(255,255,255,.12);
+      --text:#e9f2ff;
+      --muted:#9bb4d0;
+      --good:#38d978;
+      --warn:#ffcc4d;
+      --bad:#ff6767;
+      --accent:#7cc7ff;
+      --coin:#ffcf5b;
+      --sea:#1a4f7a;
+      --dock:#7a6a58;
+      --yard:#60756a;
+      --road:#505761;
+      --customs:#8f6f8c;
+      --berth:#8d7b69;
+      --crane:#d94f3d;
+      --ship:#dfe8f4;
+      --truck:#ffc857;
+      --containerA:#4dabf7;
+      --containerB:#ff922b;
+      --containerC:#69db7c;
+      --shadow:rgba(0,0,0,.22);
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;height:100%;overflow:hidden;
+      background:linear-gradient(180deg,var(--bg2),var(--bg1));
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      touch-action:none;
+    }
+    #app,#gameWrap{position:relative;width:100vw;height:100vh;overflow:hidden}
+    canvas{
+      display:block;width:100%;height:100%;
+      background:
+        radial-gradient(circle at top,rgba(255,255,255,.08),transparent 30%),
+        linear-gradient(180deg,#235c89 0%,#183d60 55%,#10253c 100%);
+      touch-action:none;
+    }
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:14px;
+      backdrop-filter:blur(10px);
+      box-shadow:0 8px 24px rgba(0,0,0,.24);
+    }
+    .screen{
+      position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;
+      background:
+        radial-gradient(circle at 50% 20%,rgba(124,199,255,.12),transparent 32%),
+        linear-gradient(180deg,#112a44 0%,#0a1624 100%);
+      z-index:20;padding:18px;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    .hidden{display:none !important}
+    .menuCard{
+      width:min(760px,100%);
+      padding:20px;
+      margin:auto 0;
+      background:rgba(12,25,41,.93);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:24px;
+      box-shadow:0 22px 60px rgba(0,0,0,.35);
+    }
+    .logoWrap{
+      display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:12px
+    }
+    .logoImg{
+      width:104px;height:104px;border-radius:22px;object-fit:cover;flex:none;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 12px 30px rgba(0,0,0,.25);
+      background:#7ec4e6;
+    }
+
+    h1,h2,h3,p{margin:0}
+    .title{font-size:clamp(28px,6vw,50px);line-height:1;font-weight:900;letter-spacing:.03em}
+    .subtitle{color:var(--muted);margin-top:8px;text-align:center}
+    .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:18px}
+    .stack{display:flex;flex-direction:column;gap:10px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+    input[type="text"]{
+      width:100%;padding:12px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);color:var(--text);font-size:15px;font-weight:700
+    }
+    .menuButtons,.rowBtns{display:flex;gap:8px;flex-wrap:wrap}
+    button{
+      appearance:none;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.07);color:var(--text);border-radius:12px;
+      padding:9px 11px;font-weight:800;font-size:12px;cursor:pointer;min-height:34px;line-height:1.15;
+    }
+    button.primary{background:linear-gradient(180deg,#2d83bd,#1c5c87)}
+    button.bigStart{
+      min-height:52px;
+      padding:14px 22px;
+      font-size:18px;
+      border-radius:16px;
+    }
+    button:active{transform:translateY(1px)}
+    .tiny{font-size:11px;color:var(--muted)}
+    .howTo{
+      background:rgba(255,255,255,.04);border-radius:16px;padding:12px;line-height:1.45;color:#dbe8f8;font-size:13px;
+    }
+    .leaderTable{
+      width:100%;border-collapse:collapse;margin-top:8px;font-size:13px
+    }
+    .leaderTable th,.leaderTable td{
+      padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left
+    }
+    .leaderTable th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+    .credits{margin-top:16px;text-align:center;color:var(--muted);font-size:11px}
+
+    .hud{
+      position:absolute;left:6px;right:6px;top:6px;
+      display:grid;grid-template-columns:1fr auto;gap:6px;pointer-events:none;z-index:4
+    }
+    .stats{
+      padding:6px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;pointer-events:auto;
+    }
+    .stat{
+      min-width:0;padding:5px 6px;border-radius:10px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06)
+    }
+    .statTop{display:flex;align-items:center;justify-content:space-between;gap:5px}
+    .iconLabel{display:flex;align-items:center;gap:5px;min-width:0}
+    .icon{
+      width:18px;height:18px;display:grid;place-items:center;
+      font-size:12px;border-radius:6px;background:rgba(255,255,255,.08)
+    }
+    .name{
+      font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+    }
+    .value{font-size:14px;font-weight:900}
+    .bar{
+      width:100%;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:5px
+    }
+    .bar > span{display:block;height:100%;width:0%;border-radius:99px}
+    .bar.goodFirst > span{background:linear-gradient(90deg,var(--bad),var(--warn),var(--good))}
+    .bar.badFirst > span{background:linear-gradient(90deg,var(--good),var(--warn),var(--bad))}
+
+    .burgerWrap{
+      position:relative;
+      pointer-events:auto;
+    }
+    .burgerBtn{
+      padding:8px 10px;font-size:14px;min-height:32px;min-width:42px;
+    }
+    .popupMenu{
+      position:absolute;top:40px;right:0;display:flex;flex-direction:column;gap:6px;
+      min-width:124px;padding:6px;
+      background:rgba(8,17,28,.95);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:12px;
+      box-shadow:0 10px 26px rgba(0,0,0,.28);
+    }
+    .popupMenu button{
+      width:100%;text-align:left;font-size:11px;min-height:32px;padding:8px 10px;
+    }
+
+    .bottomBar{
+      position:absolute;left:6px;right:6px;bottom:6px;
+      display:grid;grid-template-columns:1fr;gap:6px;pointer-events:none;z-index:4
+    }
+    .controls{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:6px;pointer-events:auto
+    }
+    .controls button small{
+      display:block;color:var(--muted);font-weight:700;margin-top:1px;font-size:10px
+    }
+    .tips{
+      padding:7px 10px;font-size:12px;color:var(--muted);pointer-events:auto
+    }
+    .toast{
+      position:absolute;left:50%;transform:translateX(-50%);
+      bottom:112px;background:rgba(10,16,24,.92);color:#fff;
+      border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 12px;
+      box-shadow:0 10px 24px rgba(0,0,0,.24);font-weight:800;font-size:12px;opacity:0;pointer-events:none;
+      transition:opacity .2s ease;z-index:10;max-width:min(92vw,600px);text-align:center
+    }
+    .toast.show{opacity:1}
+    .legend{
+      position:absolute;right:6px;bottom:108px;width:min(250px,calc(100vw - 12px));
+      padding:8px 10px;font-size:11px;line-height:1.35;color:var(--muted);z-index:4
+    }
+    .legend b{color:var(--text)}
+    .menuConfirming{color:#ffd166}
+    .gameOverPanel{
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:min(430px,92vw);padding:18px;z-index:12;
+      background:rgba(7,14,22,.94);border:1px solid rgba(255,255,255,.13);border-radius:20px;
+      box-shadow:0 20px 50px rgba(0,0,0,.35);text-align:left;
+    }
+    .gameOverPanel h2{font-size:26px;font-weight:900;margin-bottom:8px}
+    .gameOverPanel .meta{color:var(--muted);font-size:13px;margin-bottom:10px}
+    .gameOverPanel ul{margin:8px 0 14px 18px;padding:0}
+    .gameOverPanel li{margin:6px 0;font-size:14px}
+    .gameOverPanel .rowBtns{justify-content:flex-end}
+
+    @media (max-width:860px){
+      .grid2{grid-template-columns:1fr}
+      .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    @media (max-width:640px){
+      .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .legend{display:none}
+      .menuCard{padding:14px}
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="splashScreen" class="screen">
+    <div class="menuCard" style="text-align:center">
+      <div class="logoWrap">
+        <img class="logoImg" src="menu-icon.png" alt="Ports Captain icon" />
+      </div>
+      <h1 class="title">Ports Captain</h1>
+      <p class="subtitle">Build, berth, unload, clear, dispatch — and survive the flow.</p>
+      <div style="margin-top:18px">
+        <button id="enterBtn" class="primary bigStart">▶ Start Game</button>
+      </div>
+      <div class="credits">By: Loay Abu Qaoud 2026 · Version 1.0</div>
+    </div>
+  </div>
+
+  <div id="menuScreen" class="screen hidden">
+    <div class="menuCard">
+      <div class="logoWrap">
+        <img class="logoImg" src="menu-icon.png" alt="Ports Captain icon" />
+        <div>
+          <h1 class="title" style="font-size:38px">Ports Captain</h1>
+          <p class="subtitle" style="text-align:left">Welcome aboard, Captain.</p>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="stack">
+          <div class="field">
+            <label for="nicknameInput">Hi, Captain ________</label>
+            <input id="nicknameInput" type="text" maxlength="18" placeholder="Enter your nickname" />
+          </div>
+
+          <div class="field">
+            <label>Settings</label>
+            <div class="rowBtns">
+              <button id="toggleSoundMenuBtn">🔊 Sound: On</button>
+              <button id="clearLeaderBtn">🧹 Clear Scores</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>How to Play</label>
+            <div class="howTo">
+              • Drag waiting vessels from anchorage onto a free berth.<br/>
+              • Ships unload containers into the yard.<br/>
+              • Drag a truck to dispatch yard cargo to customs.<br/>
+              • Use two fingers to pan and pinch to zoom.<br/>
+              • Keep the yard from filling and the anchorage queue from overflowing.<br/>
+              • Earn coins and buy upgrades before congestion sinks the port.
+            </div>
+          </div>
+
+          <div class="menuButtons">
+            <button id="startGameBtn" class="primary bigStart">▶ Start Game</button>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="field">
+            <label>Leaderboard</label>
+            <table class="leaderTable" id="leaderTable">
+              <thead>
+                <tr><th>#</th><th>Captain</th><th>Containers</th><th>Coins</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="tiny">Mode: Local browser leaderboard</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="credits">By: Loay Abu Qaoud 2026 · Version 1.0</div>
+    </div>
+  </div>
+
+  <div id="gameWrap" class="hidden">
+    <canvas id="game"></canvas>
+
+    <div class="hud">
+      <div class="panel stats">
+        <div class="stat">
+          <div class="statTop">
+            <div class="iconLabel"><span class="icon">📦</span><span class="name">Processed</span></div>
+            <span class="value" id="processedVal">0</span>
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="statTop">
+            <div class="iconLabel"><span class="icon">🪙</span><span class="name">Coins</span></div>
+            <span class="value" id="coinsVal">0</span>
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="statTop">
+            <div class="iconLabel"><span class="icon">🚢</span><span class="name">Queue</span></div>
+            <span class="value" id="queueVal">0</span>
+          </div>
+          <div class="bar badFirst"><span id="queueBar"></span></div>
+        </div>
+
+        <div class="stat">
+          <div class="statTop">
+            <div class="iconLabel"><span class="icon">🏗️</span><span class="name">Berths</span></div>
+            <span class="value" id="berthVal">0</span>
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="statTop">
+            <div class="iconLabel"><span class="icon">📦</span><span class="name">Yard</span></div>
+            <span class="value" id="yardVal">0/0</span>
+          </div>
+          <div class="bar badFirst"><span id="yardBar"></span></div>
+        </div>
+      </div>
+
+      <div class="burgerWrap">
+        <button id="burgerBtn" class="burgerBtn panel">☰</button>
+        <div id="popupMenu" class="popupMenu hidden">
+          <button id="pauseBtn">⏸ Pause</button>
+          <button id="soundBtn">🔊 On</button>
+          <button id="menuBtn">🏠 Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend panel">
+      <b>Tip</b><br/>
+      Two fingers = pan / pinch zoom. Keep flow alive: berth, unload, clear, dispatch, expand.
+    </div>
+
+    <div class="bottomBar">
+      <div class="panel controls">
+        <button id="buyBerthBtn">⚓ + Berth<small>80 coins</small></button>
+        <button id="buyCraneBtn">🏗️ + Crane<small>60 coins</small></button>
+        <button id="buyYardBtn">📦 + Yard<small>50 coins</small></button>
+        <button id="buyTruckBtn">🚛 + Truck<small>40 coins</small></button>
+      </div>
+      <div class="panel tips" id="tipsText">
+        Drag a waiting vessel onto a free berth. Then drag a truck to customs to clear yard cargo.
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div id="gameOverPanel" class="gameOverPanel hidden">
+      <h2>Port Collapsed</h2>
+      <div class="meta" id="gameOverMeta"></div>
+      <ul id="gameOverReasons"></ul>
+      <div class="rowBtns">
+        <button id="shareScoreBtn">🖼️ Share Score</button>
+        <button id="goMenuAfterLossBtn" class="primary">🏠 Main Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const STORAGE_KEYS = {
+    nickname: "portsCaptain.nickname",
+    sound: "portsCaptain.soundEnabled",
+    leaderboard: "portsCaptain.leaderboard"
+  };
+
+  const splashScreen = document.getElementById("splashScreen");
+  const menuScreen = document.getElementById("menuScreen");
+  const gameWrap = document.getElementById("gameWrap");
+  const enterBtn = document.getElementById("enterBtn");
+  const nicknameInput = document.getElementById("nicknameInput");
+  const toggleSoundMenuBtn = document.getElementById("toggleSoundMenuBtn");
+  const clearLeaderBtn = document.getElementById("clearLeaderBtn");
+  const startGameBtn = document.getElementById("startGameBtn");
+  const leaderTableBody = document.querySelector("#leaderTable tbody");
+
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+
+  const ui = {
+    processed: document.getElementById("processedVal"),
+    coins: document.getElementById("coinsVal"),
+    queue: document.getElementById("queueVal"),
+    yard: document.getElementById("yardVal"),
+    berth: document.getElementById("berthVal"),
+    queueBar: document.getElementById("queueBar"),
+    yardBar: document.getElementById("yardBar"),
+    tips: document.getElementById("tipsText"),
+    burgerBtn: document.getElementById("burgerBtn"),
+    popupMenu: document.getElementById("popupMenu"),
+    pauseBtn: document.getElementById("pauseBtn"),
+    soundBtn: document.getElementById("soundBtn"),
+    menuBtn: document.getElementById("menuBtn"),
+    buyBerthBtn: document.getElementById("buyBerthBtn"),
+    buyCraneBtn: document.getElementById("buyCraneBtn"),
+    buyYardBtn: document.getElementById("buyYardBtn"),
+    buyTruckBtn: document.getElementById("buyTruckBtn"),
+    toast: document.getElementById("toast"),
+    gameOverPanel: document.getElementById("gameOverPanel"),
+    gameOverMeta: document.getElementById("gameOverMeta"),
+    gameOverReasons: document.getElementById("gameOverReasons"),
+    goMenuAfterLossBtn: document.getElementById("goMenuAfterLossBtn"),
+    shareScoreBtn: document.getElementById("shareScoreBtn")
+  };
+
+  const COLORS = {
+    sea:"#1a4f7a", dock:"#7a6a58", yard:"#60756a", road:"#505761", customs:"#8f6f8c",
+    berth:"#8d7b69", crane:"#d94f3d", ship:"#dfe8f4",
+    truck:"#ffc857", A:"#4dabf7", B:"#ff922b", C:"#69db7c", shadow:"rgba(0,0,0,.22)",
+    text:"#e9f2ff", muted:"#9bb4d0", bad:"#ff6767", coin:"#ffcf5b", accent:"#7cc7ff"
+  };
+
+  let W = 0, H = 0, DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  let soundEnabled = getStoredSound();
+  let audioCtx = null;
+  let animationId = null;
+  let lastTs = 0;
+  let menuConfirmTimer = null;
+
+  const jokes = [
+    "I tug U",
+    "You vesseled me",
+    "I container U",
+    "Happy berth 2 U",
+    "Sea U later",
+    "You crane my heart",
+    "Berth day vibes",
+    "Docking fabulous",
+    "Cargo you soon",
+    "Tide and true"
+  ];
+  const mood = ["😊","❤️","😍","😘","😉","🤩","🥳","😎"];
+
+  const iso = {
+    baseTileW: 92,
+    baseTileH: 46,
+    tileW: 92,
+    tileH: 46,
+    originX: 280,
+    originY: 160,
+    zoom: 1
+  };
+
+  const state = {
+    phase: "menu",
+    paused: false,
+    time: 0,
+    coins: 120,
+    processedContainers: 0,
+    yardStored: 0,
+    yardCapacity: 18,
+    craneSpeedLevel: 1,
+    berthCount: 2,
+    truckSlots: 2,
+    nextShipTimer: 0,
+    drag: null,
+    pointer: { x:0, y:0, down:false },
+    camera: { x:0, y:0 },
+    gameOver: false,
+    loseReasons: [],
+    nickname: getStoredNickname(),
+    touchMode: null,
+    gesture: null,
+    queueLimit: 8
+  };
+
+  const map = {
+    berths: [],
+    trucks: [],
+    ships: [],
+    particles: [],
+    floatTexts: [],
+    seaSpawn: { x:-2.2, y:4.7 },
+    seaLaneY: 4.7
+  };
+
+  const customsZone = { x:8.5, y:2.6, w:2.2, h:1.5 };
+
+  function getStoredNickname() {
+    return (localStorage.getItem(STORAGE_KEYS.nickname) || "").trim();
+  }
+  function setStoredNickname(v) {
+    localStorage.setItem(STORAGE_KEYS.nickname, v);
+  }
+  function getStoredSound() {
+    const v = localStorage.getItem(STORAGE_KEYS.sound);
+    return v === null ? true : v === "true";
+  }
+  function setStoredSound(v) {
+    localStorage.setItem(STORAGE_KEYS.sound, String(v));
+  }
+
+  function getLeaderboard() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.leaderboard) || "[]"); }
+    catch { return []; }
+  }
+  function saveLeaderboard(items) {
+    localStorage.setItem(STORAGE_KEYS.leaderboard, JSON.stringify(items));
+  }
+  function addLeaderboardEntry(name, containers, coins) {
+    const list = getLeaderboard();
+    list.push({
+      name: name || "Captain",
+      containers: Math.floor(containers),
+      coins: Math.floor(coins),
+      at: Date.now()
+    });
+    list.sort((a,b) => b.containers - a.containers || b.coins - a.coins || a.at - b.at);
+    saveLeaderboard(list.slice(0, 25));
+  }
+  function renderLeaderboard() {
+    const list = getLeaderboard();
+    leaderTableBody.innerHTML = "";
+    if (!list.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = '<td colspan="4" class="tiny">No scores yet.</td>';
+      leaderTableBody.appendChild(tr);
+      return;
+    }
+    list.forEach((r, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.containers}</td><td>${r.coins}</td>`;
+      leaderTableBody.appendChild(tr);
+    });
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.floor(W * DPR);
+    canvas.height = Math.floor(H * DPR);
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    updateIso();
+  }
+  function updateIso() {
+    iso.tileW = iso.baseTileW * iso.zoom;
+    iso.tileH = iso.baseTileH * iso.zoom;
+    iso.originX = Math.max(120, W * 0.34);
+    iso.originY = Math.max(95, H * 0.22);
+  }
+  function setZoom(z, silent=false) {
+    iso.zoom = Math.max(0.62, Math.min(1.5, z));
+    updateIso();
+    if (!silent) showToast(`Zoom ${Math.round(iso.zoom * 100)}%`, 700);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function showScreen(which) {
+    splashScreen.classList.toggle("hidden", which !== "splash");
+    menuScreen.classList.toggle("hidden", which !== "menu");
+    gameWrap.classList.toggle("hidden", which !== "game");
+    state.phase = which;
+    if (which !== "game") ui.gameOverPanel.classList.add("hidden");
+  }
+
+  nicknameInput.value = state.nickname;
+  toggleSoundMenuBtn.textContent = `🔊 Sound: ${soundEnabled ? "On" : "Off"}`;
+  renderLeaderboard();
+
+  enterBtn.addEventListener("click", () => showScreen("menu"));
+
+  toggleSoundMenuBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    setStoredSound(soundEnabled);
+    toggleSoundMenuBtn.textContent = `🔊 Sound: ${soundEnabled ? "On" : "Off"}`;
+    updateSoundButtons();
+    if (soundEnabled) beep(660,0.06);
+  });
+
+  clearLeaderBtn.addEventListener("click", () => {
+    saveLeaderboard([]);
+    renderLeaderboard();
+  });
+
+  startGameBtn.addEventListener("click", () => {
+    state.nickname = (nicknameInput.value || "Captain").trim().slice(0,18) || "Captain";
+    setStoredNickname(state.nickname);
+    startGame();
+  });
+
+  ui.goMenuAfterLossBtn.addEventListener("click", () => {
+    showScreen("menu");
+    renderLeaderboard();
+  });
+
+  ui.shareScoreBtn.addEventListener("click", async () => {
+    try { await shareScoreCard(); }
+    catch (e) { showToast("Sharing not supported here"); }
+  });
+
+  ui.burgerBtn.addEventListener("click", () => {
+    ui.popupMenu.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!ui.burgerBtn.contains(e.target) && !ui.popupMenu.contains(e.target)) {
+      ui.popupMenu.classList.add("hidden");
+    }
+  });
+
+  function startMenuConfirm() {
+    if (ui.menuBtn.dataset.confirming === "1") {
+      clearTimeout(menuConfirmTimer);
+      ui.menuBtn.dataset.confirming = "0";
+      ui.menuBtn.classList.remove("menuConfirming");
+      ui.menuBtn.textContent = "🏠 Menu";
+      ui.popupMenu.classList.add("hidden");
+      showScreen("menu");
+      renderLeaderboard();
+      return;
+    }
+    ui.menuBtn.dataset.confirming = "1";
+    ui.menuBtn.classList.add("menuConfirming");
+    ui.menuBtn.textContent = "❓ Sure?";
+    menuConfirmTimer = setTimeout(() => {
+      ui.menuBtn.dataset.confirming = "0";
+      ui.menuBtn.classList.remove("menuConfirming");
+      ui.menuBtn.textContent = "🏠 Menu";
+    }, 3000);
+  }
+
+  function updateSoundButtons() {
+    ui.soundBtn.textContent = `${soundEnabled ? "🔊" : "🔇"} ${soundEnabled ? "On" : "Off"}`;
+  }
+
+  function beep(freq=440, dur=0.08, type="triangle", gain=0.03) {
+    if (!soundEnabled) return;
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      g.gain.setValueAtTime(gain, now);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      osc.connect(g).connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + dur);
+    }catch(e){}
+  }
+  const coinSound = () => { beep(880,0.08,"triangle",0.04); setTimeout(()=>beep(1320,0.06,"triangle",0.03),50); };
+  const errorSound = () => beep(180,0.12,"sawtooth",0.03);
+  const dropSound = () => beep(520,0.06,"square",0.03);
+  const shipSound = () => { beep(220,0.15,"sine",0.04); setTimeout(()=>beep(180,0.15,"sine",0.03),80); };
+
+  function showToast(msg, ms=1200) {
+    ui.toast.textContent = msg;
+    ui.toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => ui.toast.classList.remove("show"), ms);
+  }
+
+  function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function toScreen(x,y,z=0){
+    return {
+      x: iso.originX + (x - y + state.camera.x) * iso.tileW / 2,
+      y: iso.originY + (x + y + state.camera.y) * iso.tileH / 2 - z * iso.zoom
+    };
+  }
+  function pointInRect(px,py,r){
+    return px>=r.x && py>=r.y && px<=r.x+r.w && py<=r.y+r.h;
+  }
+  function gradientPercent(el, p){
+    el.style.width = `${clamp(p,0,100)}%`;
+  }
+
+  function startGame() {
+    showScreen("game");
+    resetGame();
+    if (!animationId) animationId = requestAnimationFrame(frame);
+  }
+
+  function resetGame() {
+    state.paused = false;
+    state.time = 0;
+    state.coins = 120;
+    state.processedContainers = 0;
+    state.yardStored = 0;
+    state.yardCapacity = 18;
+    state.craneSpeedLevel = 1;
+    state.berthCount = 2;
+    state.truckSlots = 2;
+    state.nextShipTimer = 1.4;
+    state.drag = null;
+    state.pointer.down = false;
+    state.gameOver = false;
+    state.loseReasons = [];
+    state.touchMode = null;
+    state.gesture = null;
+    state.camera.x = 0;
+    state.camera.y = 0;
+    ui.gameOverPanel.classList.add("hidden");
+    ui.popupMenu.classList.add("hidden");
+    map.floatTexts = [];
+    initWorld();
+    setZoom(1, true);
+    updateUI();
+    showToast(`Welcome, Captain ${state.nickname}!`);
+  }
+
+  function initWorld(){
+    map.berths = [];
+    for(let i=0;i<4;i++){
+      map.berths.push({
+        id:"berth"+i,
+        x:2.4 + i*1.35,
+        y:4.1,
+        occupiedBy:null,
+        active:i < state.berthCount
+      });
+    }
+
+    map.trucks = [];
+    for(let i=0;i<5;i++){
+      map.trucks.push({
+        id:"truck"+i,
+        x:7.7 + i*0.55,
+        y:5.65 + (i%2)*0.32,
+        homeX:7.7 + i*0.55,
+        homeY:5.65 + (i%2)*0.32,
+        active:i < state.truckSlots,
+        busy:false,
+        cargo:0,
+        targetPhase:"idle",
+        processTimer:0
+      });
+    }
+
+    map.ships = [];
+    map.particles = [];
+    spawnShip(true);
+    spawnShip(true);
+    spawnShip(true);
+  }
+
+  function spawnShip(initial=false){
+    const pressure = Math.min(14, state.time / 18);
+    const cargo = Math.floor(4 + Math.random()*6 + pressure * 0.45);
+    const typeRoll = Math.random();
+    const cargoType = typeRoll < .33 ? "A" : typeRoll < .66 ? "B" : "C";
+    const len = cargo > 9 ? 1.35 : cargo > 6 ? 1.15 : .95;
+    map.ships.push({
+      id:"ship"+Math.random().toString(36).slice(2,7),
+      x: map.seaSpawn.x - (initial ? Math.random()*2 : 0),
+      y: map.seaLaneY + (Math.random()*0.35 - 0.16),
+      targetX: map.seaSpawn.x,
+      targetY: map.seaLaneY,
+      queueX: -0.8 - map.ships.filter(s => s.phase === "waiting").length * 1.15,
+      phase:"waiting",
+      berthId:null,
+      unloading:cargo,
+      cargoType,
+      length:len,
+      waitTimer:0,
+      reward:cargo * 8
+    });
+  }
+
+  function activateUpgrades(){
+    map.berths.forEach((b,i)=>b.active = i < state.berthCount);
+    map.trucks.forEach((t,i)=>t.active = i < state.truckSlots);
+  }
+
+  function addFloatText(x,y,text,color="#fff",life=3.3,size=14){
+    map.floatTexts.push({x,y,text,color,life,vy:-0.18,size});
+  }
+  function emitCoins(x,y,n=4){
+    for(let i=0;i<n;i++){
+      map.particles.push({
+        x,y,vx:(Math.random()-.5)*.8, vy:-.8 - Math.random()*.6, life:1
+      });
+    }
+  }
+
+  function berthCost(){ return 80 + (state.berthCount - 2) * 45; }
+  function craneCost(){ return 60 + (state.craneSpeedLevel - 1) * 35; }
+  function yardCost(){ return 50 + Math.floor((state.yardCapacity - 18) / 6) * 18; }
+  function truckCost(){ return 40 + (state.truckSlots - 2) * 25; }
+
+  function spend(cost, okMsg, onBuy){
+    if(state.coins < cost){
+      showToast("Not enough coins");
+      errorSound();
+      return;
+    }
+    state.coins -= cost;
+    onBuy();
+    coinSound();
+    showToast(okMsg);
+    updateUI();
+  }
+
+  ui.buyBerthBtn.addEventListener("click", () => {
+    if(state.berthCount >= 4) return showToast("All berths unlocked");
+    spend(berthCost(), "New berth constructed", () => {
+      state.berthCount++;
+      activateUpgrades();
+    });
+  });
+
+  ui.buyCraneBtn.addEventListener("click", () => {
+    if(state.craneSpeedLevel >= 5) return showToast("Crane speed maxed");
+    spend(craneCost(), "Crane operations improved", () => state.craneSpeedLevel++);
+  });
+
+  ui.buyYardBtn.addEventListener("click", () => {
+    if (state.yardCapacity >= 50) return showToast("Yard expansion maxed");
+    spend(yardCost(), "Yard expanded", () => state.yardCapacity = Math.min(50, state.yardCapacity + 6));
+  });
+
+  ui.buyTruckBtn.addEventListener("click", () => {
+    if(state.truckSlots >= 5) return showToast("All truck slots unlocked");
+    spend(truckCost(), "Truck slot added", () => {
+      state.truckSlots++;
+      activateUpgrades();
+    });
+  });
+
+  ui.pauseBtn.addEventListener("click", () => {
+    state.paused = !state.paused;
+    ui.pauseBtn.textContent = `${state.paused ? "▶" : "⏸"} ${state.paused ? "Play" : "Pause"}`;
+    showToast(state.paused ? "Paused" : "Resumed", 700);
+    ui.popupMenu.classList.add("hidden");
+  });
+
+  ui.soundBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    setStoredSound(soundEnabled);
+    toggleSoundMenuBtn.textContent = `🔊 Sound: ${soundEnabled ? "On" : "Off"}`;
+    updateSoundButtons();
+    if(soundEnabled) beep(660,0.05);
+  });
+
+  ui.menuBtn.addEventListener("click", startMenuConfirm);
+
+  function updateUI(){
+    ui.processed.textContent = Math.floor(state.processedContainers);
+    ui.coins.textContent = Math.floor(state.coins);
+    const q = map.ships.filter(s=>s.phase==="waiting").length;
+    ui.queue.textContent = q;
+    ui.yard.textContent = `${state.yardStored}/${state.yardCapacity}`;
+    ui.berth.textContent = state.berthCount;
+
+    gradientPercent(ui.queueBar, (q / state.queueLimit) * 100);
+    gradientPercent(ui.yardBar, (state.yardStored / state.yardCapacity) * 100);
+
+    ui.buyBerthBtn.querySelector("small").textContent = `${berthCost()} coins`;
+    ui.buyCraneBtn.querySelector("small").textContent = `${craneCost()} coins`;
+    ui.buyYardBtn.querySelector("small").textContent = state.yardCapacity >= 50 ? "maxed" : `${yardCost()} coins`;
+    ui.buyTruckBtn.querySelector("small").textContent = `${truckCost()} coins`;
+
+    updateSoundButtons();
+
+    if(state.gameOver){
+      ui.tips.textContent = `Loss report: ${state.loseReasons.join(" • ")}.`;
+    } else if (state.yardStored >= state.yardCapacity * 0.85) {
+      ui.tips.textContent = "Yard almost full. Dispatch trucks immediately.";
+    } else if (q >= state.queueLimit - 1) {
+      ui.tips.textContent = "Anchorage queue is getting dangerous. Free berths faster.";
+    } else if (map.ships.some(s => s.phase === "waiting")) {
+      ui.tips.textContent = "Drag a waiting vessel onto a free berth.";
+    } else {
+      ui.tips.textContent = "Keep cargo flowing: unload ships, dispatch trucks, and expand the port.";
+    }
+  }
+
+  function shipScreenRect(ship){
+    const p = toScreen(ship.x, ship.y);
+    return {x:p.x - 54*iso.zoom, y:p.y - 38*iso.zoom, w:110*iso.zoom, h:60*iso.zoom};
+  }
+  function truckScreenRect(truck){
+    const p = toScreen(truck.x, truck.y);
+    return {x:p.x - 24*iso.zoom, y:p.y - 24*iso.zoom, w:48*iso.zoom, h:40*iso.zoom};
+  }
+  function berthDropRect(berth){
+    const p = toScreen(berth.x, berth.y);
+    return {x:p.x - 50*iso.zoom, y:p.y - 32*iso.zoom, w:100*iso.zoom, h:52*iso.zoom};
+  }
+  function customsScreenRect(){
+    const p = toScreen(customsZone.x, customsZone.y);
+    return {x:p.x - 50*iso.zoom, y:p.y - 15*iso.zoom, w:150*iso.zoom, h:100*iso.zoom};
+  }
+  function screenToCanvas(e){
+    const rect = canvas.getBoundingClientRect();
+    return { x:(e.clientX - rect.left), y:(e.clientY - rect.top) };
+  }
+  function findHit(px,py){
+    for(let i=map.ships.length - 1; i>=0; i--){
+      const s = map.ships[i];
+      if(s.phase === "waiting" && pointInRect(px,py,shipScreenRect(s))) return {type:"ship", obj:s};
+    }
+    for(let i=map.trucks.length - 1; i>=0; i--){
+      const t = map.trucks[i];
+      if(t.active && !t.busy && pointInRect(px,py,truckScreenRect(t))) return {type:"truck", obj:t};
+    }
+    return null;
+  }
+
+  function dispatchTruck(truck){
+    if(truck.busy || !truck.active) return false;
+    if(state.yardStored <= 0){
+      showToast("No yard cargo to move");
+      errorSound();
+      return false;
+    }
+    truck.busy = true;
+    truck.cargo = Math.min(2, state.yardStored);
+    state.yardStored -= truck.cargo;
+    state.processedContainers += truck.cargo;
+    truck.targetPhase = "toCustoms";
+    truck.processTimer = 0;
+    dropSound();
+    updateUI();
+    return true;
+  }
+
+  function handleSinglePointerDown(e){
+    if(state.phase !== "game" || state.gameOver) return;
+    if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    const p = screenToCanvas(e);
+    state.pointer = {x:p.x, y:p.y, down:true};
+    const hit = findHit(p.x,p.y);
+    if(hit?.type === "ship"){
+      state.drag = {type:"ship", obj:hit.obj, px:p.x, py:p.y};
+      return;
+    }
+    if(hit?.type === "truck"){
+      state.drag = {type:"truck", obj:hit.obj, px:p.x, py:p.y};
+    }
+  }
+
+  function handleSinglePointerMove(e){
+    if(state.phase !== "game") return;
+    const p = screenToCanvas(e);
+    state.pointer.x = p.x;
+    state.pointer.y = p.y;
+    if(state.drag){
+      state.drag.px = p.x;
+      state.drag.py = p.y;
+    }
+  }
+
+  function handleSinglePointerUp(){
+    if(state.phase !== "game") return;
+    if(!state.drag){
+      state.pointer.down = false;
+      return;
+    }
+
+    if(state.drag.type === "ship"){
+      const ship = state.drag.obj;
+      let dropped = false;
+      for(const berth of map.berths){
+        if(!berth.active || berth.occupiedBy) continue;
+        if(pointInRect(state.drag.px, state.drag.py, berthDropRect(berth))){
+          ship.phase = "berthing";
+          ship.berthId = berth.id;
+          ship.targetX = berth.x - 0.18;
+          ship.targetY = berth.y + 0.08;
+          berth.occupiedBy = ship.id;
+          dropped = true;
+          shipSound();
+          showToast("Vessel assigned to berth");
+          break;
+        }
+      }
+      if(!dropped){
+        showToast("Drop vessel on a free berth");
+        errorSound();
+      }
+    }
+
+    if(state.drag.type === "truck"){
+      const truck = state.drag.obj;
+      if(pointInRect(state.drag.px, state.drag.py, customsScreenRect())){
+        dispatchTruck(truck);
+      } else {
+        if(dispatchTruck(truck)) showToast("Truck dispatched");
+      }
+    }
+
+    state.drag = null;
+    state.pointer.down = false;
+  }
+
+  canvas.addEventListener("mousedown", handleSinglePointerDown);
+  canvas.addEventListener("mousemove", handleSinglePointerMove);
+  canvas.addEventListener("mouseup", handleSinglePointerUp);
+  canvas.addEventListener("mouseleave", () => { if(state.pointer.down) handleSinglePointerUp(); });
+
+  canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (e.touches.length === 2) {
+      const a = e.touches[0], b = e.touches[1];
+      state.touchMode = "gesture";
+      state.drag = null;
+      state.gesture = {
+        dist: touchDist(a,b),
+        mid: touchMid(a,b),
+        zoom: iso.zoom,
+        camX: state.camera.x,
+        camY: state.camera.y
+      };
+      return;
+    }
+    if (e.touches.length === 1) {
+      state.touchMode = "single";
+      handleSinglePointerDown(e.touches[0]);
+    }
+  }, { passive:false });
+
+  canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    if (state.touchMode === "gesture" && e.touches.length === 2 && state.gesture) {
+      const a = e.touches[0], b = e.touches[1];
+      const dist = touchDist(a,b);
+      const mid = touchMid(a,b);
+      const factor = dist / state.gesture.dist;
+      setZoom(state.gesture.zoom * factor, true);
+
+      const dx = (mid.x - state.gesture.mid.x) / (iso.tileW * 0.5);
+      const dy = (mid.y - state.gesture.mid.y) / (iso.tileH * 0.5);
+      state.camera.x = state.gesture.camX + (dx - dy) * 0.55;
+      state.camera.y = state.gesture.camY + (dx + dy) * 0.55;
+      state.camera.x = clamp(state.camera.x, -4, 4);
+      state.camera.y = clamp(state.camera.y, -3, 3);
+      return;
+    }
+    if (state.touchMode === "single" && e.touches.length === 1) {
+      handleSinglePointerMove(e.touches[0]);
+    }
+  }, { passive:false });
+
+  canvas.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    if (e.touches.length === 0 && state.touchMode === "single") handleSinglePointerUp();
+    if (e.touches.length < 2) state.gesture = null;
+    if (e.touches.length === 0) state.touchMode = null;
+  }, { passive:false });
+
+  function touchDist(a,b){
+    const dx = a.clientX - b.clientX;
+    const dy = a.clientY - b.clientY;
+    return Math.hypot(dx,dy);
+  }
+  function touchMid(a,b){
+    return { x:(a.clientX + b.clientX)/2, y:(a.clientY + b.clientY)/2 };
+  }
+
+  function update(dt){
+    if(state.phase !== "game" || state.paused || state.gameOver) return;
+
+    state.time += dt;
+
+    const pressure = Math.min(14, state.time / 18);
+    const freeBerths = map.berths.filter(b => b.active && !b.occupiedBy).length;
+    const waitingShips = map.ships.filter(s => s.phase === "waiting").length;
+
+    state.nextShipTimer -= dt;
+    let spawnInterval = 5.8 - pressure * 0.25;
+    if (freeBerths > 0) spawnInterval -= freeBerths * 0.75;
+    if (waitingShips < 2) spawnInterval -= 0.4;
+    spawnInterval = clamp(spawnInterval, 0.85, 5.8);
+
+    if(state.nextShipTimer <= 0){
+      spawnShip();
+      state.nextShipTimer = spawnInterval;
+      if (pressure > 5 && freeBerths > 1 && Math.random() < 0.22) {
+        setTimeout(() => { if (!state.gameOver && state.phase === "game") spawnShip(); }, 220);
+      }
+      if (pressure > 9 && Math.random() < 0.18) {
+        setTimeout(() => { if (!state.gameOver && state.phase === "game") spawnShip(); }, 440);
+      }
+    }
+
+    const waiting = map.ships.filter(s => s.phase === "waiting");
+    waiting.forEach((s,i) => {
+      s.queueX = -0.8 - i * 1.2;
+      s.x = lerp(s.x, s.queueX, dt * 1.25);
+      s.y = lerp(s.y, map.seaLaneY + Math.sin(state.time * 2 + i) * 0.02, dt * 2);
+      s.waitTimer += dt;
+      if(s.waitTimer > Math.max(3.8, 8 - pressure * 0.3)){
+        s.waitTimer = 0;
+        map.lastPenaltyReason = "Anchorage queue delay";
+      }
+    });
+
+    for(const s of map.ships){
+      if(s.phase === "berthing"){
+        s.x = lerp(s.x, s.targetX, dt * 2.4);
+        s.y = lerp(s.y, s.targetY, dt * 2.4);
+        if(Math.abs(s.x - s.targetX) < .04 && Math.abs(s.y - s.targetY) < .04){
+          s.phase = "unloading";
+        }
+      } else if (s.phase === "unloading"){
+        const unloadRate = .54 + (state.craneSpeedLevel - 1) * .28;
+        if(state.yardStored < state.yardCapacity){
+          s._cargoTick = (s._cargoTick || 0) + dt * unloadRate;
+          if(s._cargoTick >= 1 && s.unloading > 0){
+            s._cargoTick = 0;
+            s.unloading -= 1;
+            state.yardStored += 1;
+            dropSound();
+          }
+          if(s.unloading <= 0){
+            s.phase = "departing";
+            state.coins += s.reward;
+            const berth = map.berths.find(b => b.id === s.berthId);
+            if(berth) berth.occupiedBy = null;
+            emitCoins(s.x + .2, s.y - .2, 6);
+            const msg = `${rand(jokes)} ${rand(mood)}`;
+            addFloatText(s.x + 0.45, s.y - 0.6, msg, COLORS.text, 3.6, 14);
+            coinSound();
+            showToast(`Vessel completed +${s.reward} coins`);
+          }
+        } else {
+          map.lastPenaltyReason = "Yard full blocked unloading";
+        }
+      } else if (s.phase === "departing"){
+        s.x += dt * 1.05;
+        s.y -= dt * 1.05;
+      }
+    }
+
+    map.ships = map.ships.filter(s => !(s.phase === "departing" && (s.x > 13 || s.y < -5)));
+
+    for(const t of map.trucks){
+      if(!t.active) continue;
+      if(t.busy){
+        const truckPressure = 0.9 + Math.min(1.0, pressure * 0.08);
+        if(t.targetPhase === "toCustoms"){
+          t.x = lerp(t.x, customsZone.x + .8, dt * (2.35 - truckPressure * 0.22));
+          t.y = lerp(t.y, customsZone.y + 1.0, dt * (2.35 - truckPressure * 0.22));
+          if(Math.abs(t.x - (customsZone.x + .8)) < .06 && Math.abs(t.y - (customsZone.y + 1.0)) < .06){
+            t.targetPhase = "processing";
+            t.processTimer = 1.2 + Math.min(1.4, pressure * 0.06);
+            state.coins += t.cargo * 7;
+            emitCoins(t.x, t.y, 3);
+            coinSound();
+          }
+        } else if (t.targetPhase === "processing"){
+          t.processTimer -= dt;
+          if(t.processTimer <= 0) t.targetPhase = "returning";
+        } else if (t.targetPhase === "returning"){
+          t.x = lerp(t.x, t.homeX, dt * (2.5 - truckPressure * 0.2));
+          t.y = lerp(t.y, t.homeY, dt * (2.5 - truckPressure * 0.2));
+          if(Math.abs(t.x - t.homeX) < .05 && Math.abs(t.y - t.homeY) < .05){
+            t.busy = false;
+            t.cargo = 0;
+            t.targetPhase = "idle";
+          }
+        }
+      }
+    }
+
+    if(state.yardStored > state.yardCapacity) state.yardStored = state.yardCapacity;
+
+    const queueCount = map.ships.filter(s => s.phase === "waiting").length;
+    if(queueCount >= state.queueLimit) map.lastPenaltyReason = "Anchorage queue full";
+    if(state.yardStored >= state.yardCapacity) map.lastPenaltyReason = "Yard capacity reached";
+
+    for(const p of map.particles){
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 1.2 * dt;
+      p.life -= dt;
+    }
+    map.particles = map.particles.filter(p => p.life > 0);
+
+    for(const f of map.floatTexts){
+      f.y += f.vy * dt;
+      f.life -= dt;
+    }
+    map.floatTexts = map.floatTexts.filter(f => f.life > 0);
+
+    checkLoseConditions();
+    updateUI();
+  }
+
+  function checkLoseConditions(){
+    if (state.gameOver) return;
+
+    const reasons = [];
+    const queueCount = map.ships.filter(s => s.phase === "waiting").length;
+
+    if(state.yardStored >= state.yardCapacity) reasons.push("Yard capacity reached");
+    if(queueCount >= state.queueLimit) reasons.push("Anchorage queue full");
+    if(state.coins <= 0 && queueCount >= 4 && state.yardStored >= Math.floor(state.yardCapacity * .85)) reasons.push("Cash flow exhausted under congestion");
+    if(!reasons.length && map.lastPenaltyReason && (queueCount >= state.queueLimit - 1 || state.yardStored >= state.yardCapacity * 0.98)) {
+      reasons.push(map.lastPenaltyReason);
+    }
+
+    if(reasons.length){
+      state.gameOver = true;
+      state.loseReasons = [...new Set(reasons)];
+      addLeaderboardEntry(state.nickname, state.processedContainers, state.coins);
+      ui.gameOverMeta.textContent = `Captain ${state.nickname} · Containers ${Math.floor(state.processedContainers)} · Coins ${Math.floor(state.coins)}`;
+      ui.gameOverReasons.innerHTML = state.loseReasons.map(r => `<li>${escapeHtml(r)}</li>`).join("");
+      ui.gameOverPanel.classList.remove("hidden");
+      errorSound();
+      showToast(`Port collapsed: ${state.loseReasons.join(" • ")}`, 2400);
+      renderLeaderboard();
+    }
+  }
+
+  function drawDiamond(x,y,w,h,fill,stroke=null){
+    ctx.beginPath();
+    ctx.moveTo(x, y - h/2);
+    ctx.lineTo(x + w/2, y);
+    ctx.lineTo(x, y + h/2);
+    ctx.lineTo(x - w/2, y);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    if(stroke){ ctx.strokeStyle = stroke; ctx.stroke(); }
+  }
+
+  function drawBoxTile(tx,ty,color,height=0){
+    const p = toScreen(tx, ty, height);
+    drawDiamond(p.x, p.y, iso.tileW, iso.tileH, color, "rgba(255,255,255,.06)");
+  }
+
+  function drawMap(){
+    ctx.clearRect(0,0,W,H);
+
+    for(let y=0;y<9;y++){
+      for(let x=-2;x<12;x++){
+        let col = COLORS.sea;
+        if(x>=2 && x<7 && y>=4 && y<6) col = COLORS.dock;
+        if(x>=7 && x<11 && y>=4 && y<7) col = COLORS.yard;
+        if(x>=8 && x<11 && y>=2 && y<4) col = COLORS.customs;
+        if(x>=7 && x<11 && y>=7 && y<8) col = COLORS.road;
+        drawBoxTile(x,y,col);
+      }
+    }
+
+    drawBerths();
+    drawZones();
+    drawYardContainers();
+    drawShips();
+    drawTrucks();
+    drawParticles();
+    drawFloatTexts();
+    drawOverlay();
+  }
+
+  function drawBerths(){
+    map.berths.forEach(b => {
+      const p = toScreen(b.x, b.y);
+      drawDiamond(p.x, p.y, iso.tileW*.8, iso.tileH*.65, b.active ? COLORS.berth : "rgba(100,100,100,.45)");
+
+      if(!b.active) return;
+      const scale = iso.zoom;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.fillStyle = "#6d5f51";
+      ctx.fillRect(-2*scale, -28*scale, 4*scale, 32*scale);
+      ctx.fillStyle = COLORS.crane;
+      ctx.fillRect(-7*scale, -39*scale, 13*scale, 10*scale);
+      ctx.fillRect(6*scale, -34*scale, 30*scale, 5*scale);
+      ctx.fillRect(27*scale, -29*scale, 3*scale, 20*scale);
+      ctx.strokeStyle = "#ffd5c2";
+      ctx.lineWidth = 2*scale;
+      ctx.beginPath();
+      ctx.moveTo(28*scale, -11*scale);
+      ctx.lineTo(28*scale, -2*scale);
+      ctx.stroke();
+      ctx.fillStyle = "#ffd5c2";
+      ctx.fillRect(25*scale, -3*scale, 6*scale, 4*scale);
+      ctx.restore();
+    });
+  }
+
+  function drawZones(){
+    const cp = toScreen(customsZone.x + .95, customsZone.y + .7);
+    ctx.fillStyle = "rgba(255,255,255,.16)";
+    ctx.fillRect(cp.x - 35*iso.zoom, cp.y - 55*iso.zoom, 74*iso.zoom, 48*iso.zoom);
+    ctx.fillStyle = COLORS.text;
+    ctx.font = `${Math.max(9,13*iso.zoom)}px Inter, sans-serif`;
+    ctx.fillText("CUSTOMS", cp.x - 35*iso.zoom, cp.y - 62*iso.zoom);
+
+    const yp = toScreen(8.4, 5.2);
+    ctx.fillText("YARD", yp.x - 10*iso.zoom, yp.y - 62*iso.zoom);
+
+    const seaP = toScreen(-1.7, 4.7);
+    ctx.fillText("ANCHORAGE", seaP.x - 24*iso.zoom, seaP.y - 62*iso.zoom);
+  }
+
+  function drawShips(){
+    map.ships.forEach(ship => {
+      let sx, sy;
+      if(state.drag && state.drag.obj === ship && state.drag.type === "ship"){
+        sx = state.drag.px; sy = state.drag.py;
+      } else {
+        const p = toScreen(ship.x, ship.y);
+        sx = p.x; sy = p.y;
+      }
+
+      const scale = iso.zoom;
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.fillStyle = COLORS.shadow;
+      ctx.beginPath();
+      ctx.ellipse(0, 12*scale, 42*scale, 12*scale, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = "#bfcad8";
+      ctx.beginPath();
+      ctx.moveTo(-42*ship.length*scale, 0);
+      ctx.lineTo(28*ship.length*scale, -8*scale);
+      ctx.lineTo(42*ship.length*scale, 0);
+      ctx.lineTo(28*ship.length*scale, 8*scale);
+      ctx.lineTo(-42*ship.length*scale, 8*scale);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-8*scale, -12*scale, 24*scale, 10*scale);
+
+      for(let i=0;i<Math.min(ship.unloading,6);i++){
+        ctx.fillStyle = COLORS[ship.cargoType];
+        ctx.fillRect((-26 + i*8)*scale, -4*scale, 7*scale, 6*scale);
+      }
+
+      ctx.fillStyle = COLORS.text;
+      ctx.font = `700 ${Math.max(10,11*scale)}px Inter, sans-serif`;
+      ctx.fillText(ship.unloading.toString(), -4*scale, -18*scale);
+
+      if(ship.phase === "waiting"){
+        ctx.strokeStyle = "rgba(255,255,255,.2)";
+        ctx.strokeRect(-50*scale, -30*scale, 100*scale, 56*scale);
+      }
+      ctx.restore();
+    });
+  }
+
+  function drawTrucks(){
+    map.trucks.forEach(truck => {
+      if(!truck.active) return;
+      let sx, sy;
+      if(state.drag && state.drag.obj === truck && state.drag.type === "truck"){
+        sx = state.drag.px; sy = state.drag.py;
+      } else {
+        const p = toScreen(truck.x, truck.y);
+        sx = p.x; sy = p.y;
+      }
+
+      const scale = iso.zoom;
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.fillStyle = COLORS.shadow;
+      ctx.beginPath();
+      ctx.ellipse(0, 8*scale, 18*scale, 8*scale, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = COLORS.truck;
+      ctx.fillRect(-14*scale, -10*scale, 20*scale, 12*scale);
+      ctx.fillStyle = "#d6e3f3";
+      ctx.fillRect(6*scale, -8*scale, 10*scale, 10*scale);
+      ctx.fillStyle = "#2b2b2b";
+      ctx.beginPath(); ctx.arc(-8*scale, 4*scale, 4*scale, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(10*scale, 4*scale, 4*scale, 0, Math.PI*2); ctx.fill();
+
+      if(truck.busy && truck.cargo > 0){
+        ctx.fillStyle = COLORS.B;
+        ctx.fillRect(-6*scale, -18*scale, 14*scale, 6*scale);
+      } else if(!truck.busy){
+        ctx.strokeStyle = "rgba(255,255,255,.18)";
+        ctx.strokeRect(-18*scale, -18*scale, 36*scale, 28*scale);
+      }
+      ctx.restore();
+    });
+  }
+
+  function drawYardContainers(){
+    let remaining = state.yardStored;
+    const startX = 7.3, startY = 4.5;
+    for(let row=0; row<3; row++){
+      for(let col=0; col<5; col++){
+        if(remaining <= 0) return;
+        const p = toScreen(startX + col*.55, startY + row*.56);
+        const stackH = Math.min(3, remaining);
+        for(let h=0; h<stackH; h++){
+          const colors = [COLORS.A, COLORS.B, COLORS.C];
+          ctx.fillStyle = colors[(col + row + h)%3];
+          ctx.fillRect(p.x - 12*iso.zoom, p.y - 12*iso.zoom - h*8*iso.zoom, 24*iso.zoom, 7*iso.zoom);
+        }
+        remaining -= stackH;
+      }
+    }
+  }
+
+  function drawParticles(){
+    map.particles.forEach(p => {
+      const sp = toScreen(p.x, p.y);
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = COLORS.coin;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 4*iso.zoom, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  function drawFloatTexts(){
+    map.floatTexts.forEach(f => {
+      const sp = toScreen(f.x, f.y);
+      ctx.globalAlpha = Math.max(0, Math.min(1, f.life / 1.6));
+      ctx.fillStyle = f.color;
+      ctx.font = `900 ${Math.max(12, f.size * iso.zoom)}px Inter, sans-serif`;
+      ctx.fillText(f.text, sp.x, sp.y);
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  function drawOverlay(){
+    if(state.drag?.type === "ship"){
+      map.berths.forEach(b => {
+        if(!b.active || b.occupiedBy) return;
+        const r = berthDropRect(b);
+        ctx.strokeStyle = COLORS.accent;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(r.x, r.y, r.w, r.h);
+      });
+    }
+
+    if(state.drag?.type === "truck"){
+      const r = customsScreenRect();
+      ctx.strokeStyle = COLORS.accent;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(r.x, r.y, r.w, r.h);
+    }
+  }
+
+  async function shareScoreCard() {
+    const size = 1080;
+    const c = document.createElement("canvas");
+    c.width = size;
+    c.height = size;
+    const g = c.getContext("2d");
+
+    const emoji = rand(mood);
+    const processed = Math.floor(state.processedContainers);
+    const coins = Math.floor(state.coins);
+    const nick = state.nickname || "Captain";
+
+    const grad = g.createLinearGradient(0,0,0,size);
+    grad.addColorStop(0, "#143555");
+    grad.addColorStop(1, "#0a1725");
+    g.fillStyle = grad;
+    g.fillRect(0,0,size,size);
+
+    g.fillStyle = "rgba(255,255,255,0.06)";
+    g.beginPath(); g.arc(860,220,190,0,Math.PI*2); g.fill();
+    g.beginPath(); g.arc(230,880,170,0,Math.PI*2); g.fill();
+
+    g.fillStyle = "rgba(255,255,255,0.08)";
+    roundRect(g, 80, 80, 920, 920, 48);
+    g.fill();
+
+    try {
+      const img = await loadImage("menu-icon.png");
+      g.save();
+      g.beginPath();
+      roundRect(g, 140, 140, 150, 150, 28);
+      g.clip();
+      g.drawImage(img, 140, 140, 150, 150);
+      g.restore();
+    } catch {
+      g.fillStyle = "#7ec4e6";
+      roundRect(g, 140, 140, 150, 150, 28);
+      g.fill();
+    }
+
+    g.fillStyle = "#e9f2ff";
+    g.font = "900 72px Inter, Arial, sans-serif";
+    g.fillText("Ports Captain", 320, 210);
+
+    g.fillStyle = "#9bb4d0";
+    g.font = "700 34px Inter, Arial, sans-serif";
+    g.fillText("Port survival challenge", 320, 258);
+
+    g.fillStyle = "rgba(255,255,255,0.06)";
+    roundRect(g, 140, 330, 800, 330, 38);
+    g.fill();
+
+    g.fillStyle = "#ffcf5b";
+    g.font = "900 110px Inter, Arial, sans-serif";
+    g.fillText(String(processed), 180, 485);
+
+    g.fillStyle = "#e9f2ff";
+    g.font = "800 54px Inter, Arial, sans-serif";
+    g.fillText(`I processed ${processed} containers ${emoji}`, 180, 580);
+
+    g.fillStyle = "#9bb4d0";
+    g.font = "700 42px Inter, Arial, sans-serif";
+    g.fillText(`- Captain ${nick}`, 180, 655);
+
+    g.fillStyle = "rgba(255,255,255,0.06)";
+    roundRect(g, 140, 720, 800, 160, 30);
+    g.fill();
+
+    g.fillStyle = "#e9f2ff";
+    g.font = "800 42px Inter, Arial, sans-serif";
+    g.fillText(`Coins: ${coins}`, 180, 810);
+
+    const blob = await new Promise(resolve => c.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("blob failed");
+
+    const file = new File([blob], "ports-captain-score.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "Ports Captain Score",
+        text: `I processed ${processed} containers in Ports Captain ${emoji}`
+      });
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ports-captain-score.png";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    showToast("Score image downloaded");
+  }
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function roundRect(g, x, y, w, h, r) {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+
+  function frame(ts){
+    animationId = requestAnimationFrame(frame);
+    const dt = Math.min(.05, (ts - (lastTs || ts))/1000);
+    lastTs = ts;
+    update(dt);
+    if(state.phase === "game") drawMap();
+  }
+
+  showScreen("splash");
+  updateSoundButtons();
+  updateUI();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
