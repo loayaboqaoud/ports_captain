@@ -25,14 +25,12 @@
       --customs:#8f6f8c;
       --berth:#8d7b69;
       --crane:#d94f3d;
-      --ship:#ff4c4c;
-      --ship2:#20b8c5;
+      --ship:#dfe8f4;
       --truck:#ffc857;
       --containerA:#4dabf7;
-      --containerB:#ffb454;
-      --containerC:#e7a352;
+      --containerB:#ff922b;
+      --containerC:#69db7c;
       --shadow:rgba(0,0,0,.22);
-      --overlay:rgba(4,10,18,.78);
     }
     *{box-sizing:border-box}
     html,body{
@@ -68,7 +66,7 @@
     .menuCard{
       width:min(760px,100%);
       padding:20px;
-      background:var(--panel2);
+      background:rgba(12,25,41,.93);
       border:1px solid rgba(255,255,255,.14);
       border-radius:24px;
       box-shadow:0 22px 60px rgba(0,0,0,.35);
@@ -82,6 +80,7 @@
       border:1px solid rgba(255,255,255,.14);
       box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 12px 30px rgba(0,0,0,.25);
       overflow:hidden;
+      flex:none;
     }
     .logo .sea{
       position:absolute;left:8px;right:8px;bottom:10px;height:18px;background:#41c5cf;border-radius:0 0 10px 10px;
@@ -96,14 +95,14 @@
       position:absolute;right:8px;bottom:28px;width:24px;height:34px;background:#f21f1f;
       clip-path:polygon(0 100%,72% 0,100% 0,30% 100%);
     }
-    .logo .stack1,.logo .stack2,.logo .stack3,.logo .cabin,.logo .mast,.logo .band{
+    .logo .stack1,.logo .stack2,.logo .stack3,.logo .stack4,.logo .stack5,.logo .cabin,.logo .mast,.logo .band{
       position:absolute;
     }
     .logo .stack1{left:39px;bottom:56px;width:26px;height:34px;background:#f0b865}
     .logo .stack2{left:64px;bottom:56px;width:24px;height:34px;background:#e4a355}
     .logo .stack3{left:64px;bottom:34px;width:24px;height:22px;background:#f0b865}
-    .logo .stack4{left:39px;bottom:34px;width:26px;height:22px;background:#e4a355;position:absolute}
-    .logo .stack5{left:88px;bottom:34px;width:22px;height:22px;background:#e4a355;position:absolute}
+    .logo .stack4{left:39px;bottom:34px;width:26px;height:22px;background:#e4a355}
+    .logo .stack5{left:88px;bottom:34px;width:22px;height:22px;background:#e4a355}
     .logo .cabin{
       left:14px;bottom:34px;width:22px;height:54px;background:#b9c8d8;
       box-shadow:22px 0 0 0 #a5bccf;
@@ -117,10 +116,7 @@
     }
 
     h1,h2,h3,p{margin:0}
-    .title{
-      font-size:clamp(28px,6vw,50px);
-      line-height:1;font-weight:900;letter-spacing:.03em
-    }
+    .title{font-size:clamp(28px,6vw,50px);line-height:1;font-weight:900;letter-spacing:.03em}
     .subtitle{color:var(--muted);margin-top:8px;text-align:center}
     .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:18px}
     .stack{display:flex;flex-direction:column;gap:10px}
@@ -134,15 +130,13 @@
     button{
       appearance:none;border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.07);color:var(--text);border-radius:12px;
-      padding:9px 11px;font-weight:800;font-size:12px;cursor:pointer;min-height:34px;
-      line-height:1.15;
+      padding:9px 11px;font-weight:800;font-size:12px;cursor:pointer;min-height:34px;line-height:1.15;
     }
     button.primary{background:linear-gradient(180deg,#2d83bd,#1c5c87)}
     button:active{transform:translateY(1px)}
     .tiny{font-size:11px;color:var(--muted)}
     .howTo{
-      background:rgba(255,255,255,.04);border-radius:16px;padding:12px;line-height:1.45;color:#dbe8f8;
-      font-size:13px;
+      background:rgba(255,255,255,.04);border-radius:16px;padding:12px;line-height:1.45;color:#dbe8f8;font-size:13px;
     }
     .leaderTable{
       width:100%;border-collapse:collapse;margin-top:8px;font-size:13px
@@ -158,8 +152,7 @@
       display:grid;grid-template-columns:1fr auto;gap:6px;pointer-events:none;z-index:4
     }
     .stats{
-      padding:6px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;
-      pointer-events:auto;
+      padding:6px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;pointer-events:auto;
     }
     .stat{
       min-width:0;padding:5px 6px;border-radius:10px;background:rgba(255,255,255,.04);
@@ -216,10 +209,9 @@
     .menuConfirming{color:#ffd166}
     .gameOverPanel{
       position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-      width:min(420px,92vw);padding:18px;z-index:12;
+      width:min(430px,92vw);padding:18px;z-index:12;
       background:rgba(7,14,22,.94);border:1px solid rgba(255,255,255,.13);border-radius:20px;
-      box-shadow:0 20px 50px rgba(0,0,0,.35);
-      text-align:left;
+      box-shadow:0 20px 50px rgba(0,0,0,.35);text-align:left;
     }
     .gameOverPanel h2{font-size:26px;font-weight:900;margin-bottom:8px}
     .gameOverPanel .meta{color:var(--muted);font-size:13px;margin-bottom:10px}
@@ -228,10 +220,9 @@
     .gameOverPanel .rowBtns{justify-content:flex-end}
     @media (max-width:860px){
       .grid2{grid-template-columns:1fr}
-      .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
     }
     @media (max-width:640px){
-      .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
       .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
       .legend{display:none}
       .menuCard{padding:14px}
@@ -302,7 +293,6 @@
               <button id="toggleSoundMenuBtn">🔊 Sound: On</button>
               <button id="clearLeaderBtn">🧹 Clear Scores</button>
             </div>
-            <div class="tiny">Optional Microsoft mode: this file can push/read scores from a SharePoint List when configured below in the script.</div>
           </div>
 
           <div class="field">
@@ -327,11 +317,11 @@
             <label>Leaderboard</label>
             <table class="leaderTable" id="leaderTable">
               <thead>
-                <tr><th>#</th><th>Captain</th><th>Coins</th><th>Days</th></tr>
+                <tr><th>#</th><th>Captain</th><th>Containers</th><th>Coins</th></tr>
               </thead>
               <tbody></tbody>
             </table>
-            <div class="tiny" id="leaderModeText">Mode: Local browser leaderboard</div>
+            <div class="tiny">Mode: Local browser leaderboard</div>
           </div>
         </div>
       </div>
@@ -345,6 +335,13 @@
 
     <div class="hud">
       <div class="panel stats">
+        <div class="stat">
+          <div class="statTop">
+            <div class="iconLabel"><span class="icon">📦</span><span class="name">Processed</span></div>
+            <span class="value" id="processedVal">0</span>
+          </div>
+        </div>
+
         <div class="stat">
           <div class="statTop">
             <div class="iconLabel"><span class="icon">🪙</span><span class="name">Coins</span></div>
@@ -370,15 +367,7 @@
 
         <div class="stat">
           <div class="statTop">
-            <div class="iconLabel"><span class="icon">📦</span><span class="name">Yard</span></div>
-            <span class="value" id="yardVal">0/0</span>
-          </div>
-          <div class="bar badFirst"><span id="yardBar"></span></div>
-        </div>
-
-        <div class="stat">
-          <div class="statTop">
-            <div class="iconLabel"><span class="icon">⚓</span><span class="name">Berths</span></div>
+            <div class="iconLabel"><span class="icon">🏗️</span><span class="name">Berths</span></div>
             <span class="value" id="berthVal">0</span>
           </div>
         </div>
@@ -392,9 +381,10 @@
 
         <div class="stat">
           <div class="statTop">
-            <div class="iconLabel"><span class="icon">📅</span><span class="name">Day</span></div>
-            <span class="value" id="dayVal">1</span>
+            <div class="iconLabel"><span class="icon">📦</span><span class="name">Yard</span></div>
+            <span class="value" id="yardVal">0/0</span>
           </div>
+          <div class="bar badFirst"><span id="yardBar"></span></div>
         </div>
       </div>
 
@@ -429,6 +419,7 @@
       <div class="meta" id="gameOverMeta"></div>
       <ul id="gameOverReasons"></ul>
       <div class="rowBtns">
+        <button id="shareScoreBtn">🖼️ Share Score</button>
         <button id="goMenuAfterLossBtn" class="primary">🏠 Main Menu</button>
       </div>
     </div>
@@ -437,21 +428,12 @@
 
 <script>
 (() => {
-  const CONFIG = {
-    sharePointLeaderboard: {
-      enabled: false,
-      siteUrl: "", 
-      listTitle: "PortsCaptainLeaderboard"
-    }
-  };
-
   const STORAGE_KEYS = {
     nickname: "portsCaptain.nickname",
     sound: "portsCaptain.soundEnabled",
     leaderboard: "portsCaptain.leaderboard"
   };
 
-  const app = document.getElementById("app");
   const splashScreen = document.getElementById("splashScreen");
   const menuScreen = document.getElementById("menuScreen");
   const gameWrap = document.getElementById("gameWrap");
@@ -461,19 +443,18 @@
   const clearLeaderBtn = document.getElementById("clearLeaderBtn");
   const startGameBtn = document.getElementById("startGameBtn");
   const leaderTableBody = document.querySelector("#leaderTable tbody");
-  const leaderModeText = document.getElementById("leaderModeText");
 
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
 
   const ui = {
+    processed: document.getElementById("processedVal"),
     coins: document.getElementById("coinsVal"),
     rep: document.getElementById("repVal"),
     queue: document.getElementById("queueVal"),
     yard: document.getElementById("yardVal"),
     berth: document.getElementById("berthVal"),
     truck: document.getElementById("truckVal"),
-    day: document.getElementById("dayVal"),
     repBar: document.getElementById("repBar"),
     queueBar: document.getElementById("queueBar"),
     yardBar: document.getElementById("yardBar"),
@@ -489,13 +470,14 @@
     gameOverPanel: document.getElementById("gameOverPanel"),
     gameOverMeta: document.getElementById("gameOverMeta"),
     gameOverReasons: document.getElementById("gameOverReasons"),
-    goMenuAfterLossBtn: document.getElementById("goMenuAfterLossBtn")
+    goMenuAfterLossBtn: document.getElementById("goMenuAfterLossBtn"),
+    shareScoreBtn: document.getElementById("shareScoreBtn")
   };
 
   const COLORS = {
     sea:"#1a4f7a", dock:"#7a6a58", yard:"#60756a", road:"#505761", customs:"#8f6f8c",
-    berth:"#8d7b69", crane:"#d94f3d", ship:"#dfe8f4", shipHull:"#ff4c4c", shipWater:"#20b8c5",
-    truck:"#ffc857", A:"#4dabf7", B:"#ffb454", C:"#e7a352", shadow:"rgba(0,0,0,.22)",
+    berth:"#8d7b69", crane:"#d94f3d", ship:"#dfe8f4",
+    truck:"#ffc857", A:"#4dabf7", B:"#ff922b", C:"#69db7c", shadow:"rgba(0,0,0,.22)",
     text:"#e9f2ff", muted:"#9bb4d0", good:"#38d978", warn:"#ffcc4d", bad:"#ff6767",
     coin:"#ffcf5b", accent:"#7cc7ff"
   };
@@ -519,7 +501,7 @@
     "Cargo you soon",
     "Tide and true"
   ];
-  const mood = ["😊","❤️","😍","😘","😉"];
+  const mood = ["😊","❤️","😍","😘","😉","🤩","🥳","😎"];
 
   const iso = {
     baseTileW: 92,
@@ -534,9 +516,9 @@
   const state = {
     phase: "menu",
     paused: false,
-    day: 1,
     time: 0,
     coins: 120,
+    processedContainers: 0,
     reputation: 100,
     yardStored: 0,
     yardCapacity: 18,
@@ -544,7 +526,6 @@
     berthCount: 2,
     truckSlots: 2,
     nextShipTimer: 0,
-    shipSpawnInterval: 6,
     drag: null,
     pointer: { x:0, y:0, down:false },
     camera: { x:0, y:0 },
@@ -553,7 +534,7 @@
     nickname: getStoredNickname(),
     touchMode: null,
     gesture: null,
-    queueLimit: 6
+    queueLimit: 8
   };
 
   const map = {
@@ -582,173 +563,26 @@
     localStorage.setItem(STORAGE_KEYS.sound, String(v));
   }
 
-  function getLocalLeaderboard() {
+  function getLeaderboard() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.leaderboard) || "[]"); }
     catch { return []; }
   }
-  function saveLocalLeaderboard(items) {
+  function saveLeaderboard(items) {
     localStorage.setItem(STORAGE_KEYS.leaderboard, JSON.stringify(items));
   }
-  function addLocalLeaderboardEntry(name, coins, days) {
-    const list = getLocalLeaderboard();
-    list.push({ name: name || "Captain", coins: Math.floor(coins), days: Math.floor(days), at: Date.now() });
-    list.sort((a,b) => b.coins - a.coins || b.days - a.days || a.at - b.at);
-    saveLocalLeaderboard(list.slice(0, 20));
-  }
-
-  function isSharePointMode() {
-    return !!CONFIG.sharePointLeaderboard.enabled;
-  }
-
-  async function getRequestDigest(siteUrl) {
-    const res = await fetch(siteUrl.replace(/\/$/, "") + "/_api/contextinfo", {
-      method: "POST",
-      headers: { "Accept": "application/json;odata=verbose" },
-      credentials: "include"
+  function addLeaderboardEntry(name, containers, coins) {
+    const list = getLeaderboard();
+    list.push({
+      name: name || "Captain",
+      containers: Math.floor(containers),
+      coins: Math.floor(coins),
+      at: Date.now()
     });
-    if (!res.ok) throw new Error("contextinfo failed");
-    const json = await res.json();
-    return json.d.GetContextWebInformation.FormDigestValue;
+    list.sort((a,b) => b.containers - a.containers || b.coins - a.coins || a.at - b.at);
+    saveLeaderboard(list.slice(0, 25));
   }
-
-  async function fetchSharePointLeaderboard() {
-    const siteUrl = CONFIG.sharePointLeaderboard.siteUrl || location.origin;
-    const listTitle = encodeURIComponent(CONFIG.sharePointLeaderboard.listTitle);
-    const url = siteUrl.replace(/\/$/, "") +
-      "/_api/web/lists/getbytitle('" + listTitle + "')/items?$select=Title,Coins,Days&$orderby=Coins desc,Days desc&$top=20";
-    const res = await fetch(url, {
-      headers: { "Accept": "application/json;odata=verbose" },
-      credentials: "include"
-    });
-    if (!res.ok) throw new Error("read leaderboard failed");
-    const json = await res.json();
-    return (json.d.results || []).map(r => ({ name: r.Title, coins: r.Coins || 0, days: r.Days || 0 }));
-  }
-
-  async function createSharePointLeaderboardListIfMissing() {
-    const siteUrl = CONFIG.sharePointLeaderboard.siteUrl || location.origin;
-    const listTitle = CONFIG.sharePointLeaderboard.listTitle;
-    const digest = await getRequestDigest(siteUrl);
-    const checkUrl = siteUrl.replace(/\/$/, "") +
-      "/_api/web/lists/getbytitle('" + encodeURIComponent(listTitle) + "')";
-    const check = await fetch(checkUrl, {
-      headers: { "Accept": "application/json;odata=verbose" },
-      credentials: "include"
-    });
-    if (check.ok) return;
-
-    const createRes = await fetch(siteUrl.replace(/\/$/, "") + "/_api/web/lists", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": digest
-      },
-      body: JSON.stringify({
-        "__metadata": { "type": "SP.List" },
-        "AllowContentTypes": true,
-        "BaseTemplate": 100,
-        "ContentTypesEnabled": true,
-        "Title": listTitle
-      })
-    });
-    if (!createRes.ok) throw new Error("create list failed");
-
-    const digest2 = await getRequestDigest(siteUrl);
-    const fieldUrl = siteUrl.replace(/\/$/, "") +
-      "/_api/web/lists/getbytitle('" + encodeURIComponent(listTitle) + "')/fields";
-
-    await fetch(fieldUrl, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": digest2
-      },
-      body: JSON.stringify({
-        "__metadata": { "type": "SP.Field" },
-        "Title": "Coins",
-        "FieldTypeKind": 9
-      })
-    });
-
-    const digest3 = await getRequestDigest(siteUrl);
-    await fetch(fieldUrl, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": digest3
-      },
-      body: JSON.stringify({
-        "__metadata": { "type": "SP.Field" },
-        "Title": "Days",
-        "FieldTypeKind": 9
-      })
-    });
-  }
-
-  async function addSharePointLeaderboardEntry(name, coins, days) {
-    const siteUrl = CONFIG.sharePointLeaderboard.siteUrl || location.origin;
-    const listTitle = CONFIG.sharePointLeaderboard.listTitle;
-    await createSharePointLeaderboardListIfMissing();
-    const digest = await getRequestDigest(siteUrl);
-
-    const metaRes = await fetch(
-      siteUrl.replace(/\/$/, "") + "/_api/web/lists/getbytitle('" + encodeURIComponent(listTitle) + "')?$select=ListItemEntityTypeFullName",
-      { headers: { "Accept": "application/json;odata=verbose" }, credentials: "include" }
-    );
-    if (!metaRes.ok) throw new Error("list metadata failed");
-    const meta = await metaRes.json();
-    const entityType = meta.d.ListItemEntityTypeFullName;
-
-    const postUrl = siteUrl.replace(/\/$/, "") + "/_api/web/lists/getbytitle('" + encodeURIComponent(listTitle) + "')/items";
-    const res = await fetch(postUrl, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose",
-        "X-RequestDigest": digest
-      },
-      body: JSON.stringify({
-        "__metadata": { "type": entityType },
-        "Title": String(name || "Captain"),
-        "Coins": Math.floor(coins),
-        "Days": Math.floor(days)
-      })
-    });
-    if (!res.ok) throw new Error("write leaderboard failed");
-  }
-
-  async function loadLeaderboard() {
-    try {
-      if (isSharePointMode()) {
-        leaderModeText.textContent = "Mode: SharePoint List leaderboard";
-        return await fetchSharePointLeaderboard();
-      }
-    } catch (err) {
-      leaderModeText.textContent = "Mode: SharePoint failed, using local";
-    }
-    leaderModeText.textContent = "Mode: Local browser leaderboard";
-    return getLocalLeaderboard();
-  }
-
-  async function addLeaderboardEntry(name, coins, days) {
-    try {
-      if (isSharePointMode()) {
-        await addSharePointLeaderboardEntry(name, coins, days);
-        return;
-      }
-    } catch (err) {}
-    addLocalLeaderboardEntry(name, coins, days);
-  }
-
-  async function renderLeaderboard() {
-    const list = await loadLeaderboard();
+  function renderLeaderboard() {
+    const list = getLeaderboard();
     leaderTableBody.innerHTML = "";
     if (!list.length) {
       const tr = document.createElement("tr");
@@ -758,11 +592,10 @@
     }
     list.forEach((r, i) => {
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.coins}</td><td>${r.days}</td>`;
+      tr.innerHTML = `<td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.containers}</td><td>${r.coins}</td>`;
       leaderTableBody.appendChild(tr);
     });
   }
-
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, ch => ({
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -790,7 +623,6 @@
     updateIso();
     if (!silent) showToast(`Zoom ${Math.round(iso.zoom * 100)}%`, 700);
   }
-
   window.addEventListener("resize", resize);
   resize();
 
@@ -816,13 +648,9 @@
     if (soundEnabled) beep(660,0.06);
   });
 
-  clearLeaderBtn.addEventListener("click", async () => {
-    if (isSharePointMode()) {
-      showToast("Clear scores is local-only in this file.");
-      return;
-    }
-    saveLocalLeaderboard([]);
-    await renderLeaderboard();
+  clearLeaderBtn.addEventListener("click", () => {
+    saveLeaderboard([]);
+    renderLeaderboard();
   });
 
   startGameBtn.addEventListener("click", () => {
@@ -831,9 +659,17 @@
     startGame();
   });
 
-  ui.goMenuAfterLossBtn.addEventListener("click", async () => {
+  ui.goMenuAfterLossBtn.addEventListener("click", () => {
     showScreen("menu");
-    await renderLeaderboard();
+    renderLeaderboard();
+  });
+
+  ui.shareScoreBtn.addEventListener("click", async () => {
+    try {
+      await shareScoreCard();
+    } catch (e) {
+      showToast("Sharing not supported here");
+    }
   });
 
   function startMenuConfirm() {
@@ -876,7 +712,6 @@
       osc.stop(now + dur);
     }catch(e){}
   }
-
   const coinSound = () => { beep(880,0.08,"triangle",0.04); setTimeout(()=>beep(1320,0.06,"triangle",0.03),50); };
   const errorSound = () => beep(180,0.12,"sawtooth",0.03);
   const dropSound = () => beep(520,0.06,"square",0.03);
@@ -913,22 +748,20 @@
 
   function resetGame() {
     state.paused = false;
-    state.day = 1;
     state.time = 0;
     state.coins = 120;
+    state.processedContainers = 0;
     state.reputation = 100;
     state.yardStored = 0;
     state.yardCapacity = 18;
     state.craneSpeedLevel = 1;
     state.berthCount = 2;
     state.truckSlots = 2;
-    state.nextShipTimer = 2;
-    state.shipSpawnInterval = 6;
+    state.nextShipTimer = 1.4;
     state.drag = null;
     state.pointer.down = false;
     state.gameOver = false;
     state.loseReasons = [];
-    state.queueLimit = 6;
     state.touchMode = null;
     state.gesture = null;
     state.camera.x = 0;
@@ -973,11 +806,12 @@
     map.particles = [];
     spawnShip(true);
     spawnShip(true);
+    spawnShip(true);
   }
 
   function spawnShip(initial=false){
-    const dayFactor = Math.min(10, Math.floor(state.day / 3));
-    const cargo = Math.floor(4 + Math.random()*7 + dayFactor * 0.4);
+    const pressure = Math.min(12, state.time / 22);
+    const cargo = Math.floor(4 + Math.random()*6 + pressure * 0.45);
     const typeRoll = Math.random();
     const cargoType = typeRoll < .33 ? "A" : typeRoll < .66 ? "B" : "C";
     const len = cargo > 9 ? 1.35 : cargo > 6 ? 1.15 : .95;
@@ -1003,8 +837,8 @@
     map.trucks.forEach((t,i)=>t.active = i < state.truckSlots);
   }
 
-  function addFloatText(x,y,text,color="#fff",life=2.8,size=14){
-    map.floatTexts.push({x,y,text,color,life,vy:-0.22,size});
+  function addFloatText(x,y,text,color="#fff",life=3.3,size=14){
+    map.floatTexts.push({x,y,text,color,life,vy:-0.18,size});
   }
   function emitCoins(x,y,n=4){
     for(let i=0;i<n;i++){
@@ -1016,7 +850,7 @@
 
   function berthCost(){ return 80 + (state.berthCount - 2) * 45; }
   function craneCost(){ return 60 + (state.craneSpeedLevel - 1) * 35; }
-  function yardCost(){ return 50 + Math.floor((state.yardCapacity - 18) / 6) * 24; }
+  function yardCost(){ return 50 + Math.floor((state.yardCapacity - 18) / 6) * 18; }
   function truckCost(){ return 40 + (state.truckSlots - 2) * 25; }
 
   function spend(cost, okMsg, onBuy){
@@ -1046,8 +880,8 @@
   });
 
   ui.buyYardBtn.addEventListener("click", () => {
-    if (state.yardCapacity >= 36) return showToast("Yard expansion maxed");
-    spend(yardCost(), "Yard expanded", () => state.yardCapacity += 6);
+    if (state.yardCapacity >= 50) return showToast("Yard expansion maxed");
+    spend(yardCost(), "Yard expanded", () => state.yardCapacity = Math.min(50, state.yardCapacity + 6));
   });
 
   ui.buyTruckBtn.addEventListener("click", () => {
@@ -1075,6 +909,7 @@
   ui.menuBtn.addEventListener("click", startMenuConfirm);
 
   function updateUI(){
+    ui.processed.textContent = Math.floor(state.processedContainers);
     ui.coins.textContent = Math.floor(state.coins);
     ui.rep.textContent = Math.max(0, Math.floor(state.reputation));
     const q = map.ships.filter(s=>s.phase==="waiting").length;
@@ -1082,7 +917,6 @@
     ui.yard.textContent = `${state.yardStored}/${state.yardCapacity}`;
     ui.berth.textContent = state.berthCount;
     ui.truck.textContent = state.truckSlots;
-    ui.day.textContent = state.day;
 
     gradientPercent(ui.repBar, state.reputation);
     gradientPercent(ui.queueBar, (q / state.queueLimit) * 100);
@@ -1090,7 +924,7 @@
 
     ui.buyBerthBtn.querySelector("small").textContent = `${berthCost()} coins`;
     ui.buyCraneBtn.querySelector("small").textContent = `${craneCost()} coins`;
-    ui.buyYardBtn.querySelector("small").textContent = state.yardCapacity >= 36 ? "maxed" : `${yardCost()} coins`;
+    ui.buyYardBtn.querySelector("small").textContent = state.yardCapacity >= 50 ? "maxed" : `${yardCost()} coins`;
     ui.buyTruckBtn.querySelector("small").textContent = `${truckCost()} coins`;
 
     updateSoundButtons();
@@ -1150,6 +984,7 @@
     truck.busy = true;
     truck.cargo = Math.min(2, state.yardStored);
     state.yardStored -= truck.cargo;
+    state.processedContainers += truck.cargo;
     truck.targetPhase = "toCustoms";
     truck.processTimer = 0;
     dropSound();
@@ -1294,23 +1129,35 @@
     if(state.phase !== "game" || state.paused || state.gameOver) return;
 
     state.time += dt;
-    state.day = 1 + Math.floor(state.time / 24);
 
-    const dayPressure = Math.min(12, state.day * 0.12);
+    const pressure = Math.min(14, state.time / 18);
+    const freeBerths = map.berths.filter(b => b.active && !b.occupiedBy).length;
+    const waitingShips = map.ships.filter(s => s.phase === "waiting").length;
+
     state.nextShipTimer -= dt;
-    const currentInterval = clamp(state.shipSpawnInterval - dayPressure * 0.55, 1.9, 6);
+    let spawnInterval = 5.8 - pressure * 0.25;
+    if (freeBerths > 0) spawnInterval -= freeBerths * 0.75;
+    if (waitingShips < 2) spawnInterval -= 0.4;
+    spawnInterval = clamp(spawnInterval, 0.85, 5.8);
+
     if(state.nextShipTimer <= 0){
       spawnShip();
-      state.nextShipTimer = currentInterval;
+      state.nextShipTimer = spawnInterval;
+      if (pressure > 5 && freeBerths > 1 && Math.random() < 0.22) {
+        setTimeout(() => { if (!state.gameOver && state.phase === "game") spawnShip(); }, 220);
+      }
+      if (pressure > 9 && Math.random() < 0.18) {
+        setTimeout(() => { if (!state.gameOver && state.phase === "game") spawnShip(); }, 440);
+      }
     }
 
-    const waitingShips = map.ships.filter(s => s.phase === "waiting");
-    waitingShips.forEach((s,i) => {
+    const waiting = map.ships.filter(s => s.phase === "waiting");
+    waiting.forEach((s,i) => {
       s.queueX = -0.8 - i * 1.2;
       s.x = lerp(s.x, s.queueX, dt * 1.25);
       s.y = lerp(s.y, map.seaLaneY + Math.sin(state.time * 2 + i) * 0.02, dt * 2);
       s.waitTimer += dt;
-      if(s.waitTimer > Math.max(4.8, 8 - dayPressure * 0.25)){
+      if(s.waitTimer > Math.max(3.8, 8 - pressure * 0.3)){
         s.waitTimer = 0;
         state.reputation -= 2.2;
       }
@@ -1324,7 +1171,7 @@
           s.phase = "unloading";
         }
       } else if (s.phase === "unloading"){
-        const unloadRate = .52 + (state.craneSpeedLevel - 1) * .28;
+        const unloadRate = .54 + (state.craneSpeedLevel - 1) * .28;
         if(state.yardStored < state.yardCapacity){
           s._cargoTick = (s._cargoTick || 0) + dt * unloadRate;
           if(s._cargoTick >= 1 && s.unloading > 0){
@@ -1336,36 +1183,36 @@
           if(s.unloading <= 0){
             s.phase = "departing";
             state.coins += s.reward;
-            state.reputation = Math.min(100, state.reputation + 2.4);
+            state.reputation = Math.min(100, state.reputation + 2.2);
             const berth = map.berths.find(b => b.id === s.berthId);
             if(berth) berth.occupiedBy = null;
             emitCoins(s.x + .2, s.y - .2, 6);
             const msg = `${rand(jokes)} ${rand(mood)}`;
-            addFloatText(s.x + 0.3, s.y - 0.25, msg, COLORS.text, 3.3, 14);
+            addFloatText(s.x + 0.45, s.y - 0.6, msg, COLORS.text, 3.6, 14);
             coinSound();
             showToast(`Vessel completed +${s.reward} coins`);
           }
         } else {
-          state.reputation -= dt * (2 + dayPressure * 0.1);
+          state.reputation -= dt * (2 + pressure * 0.12);
         }
       } else if (s.phase === "departing"){
-        s.x += dt * 1.25;
-        s.y -= dt * 0.6;
+        s.x += dt * 1.05;
+        s.y -= dt * 1.05;
       }
     }
 
-    map.ships = map.ships.filter(s => !(s.phase === "departing" && (s.x > 12 || s.y < -4)));
+    map.ships = map.ships.filter(s => !(s.phase === "departing" && (s.x > 13 || s.y < -5)));
 
     for(const t of map.trucks){
       if(!t.active) continue;
       if(t.busy){
-        const truckPressure = 0.9 + Math.min(0.8, state.day * 0.02);
+        const truckPressure = 0.9 + Math.min(1.0, pressure * 0.08);
         if(t.targetPhase === "toCustoms"){
           t.x = lerp(t.x, customsZone.x + .8, dt * (2.35 - truckPressure * 0.22));
           t.y = lerp(t.y, customsZone.y + 1.0, dt * (2.35 - truckPressure * 0.22));
           if(Math.abs(t.x - (customsZone.x + .8)) < .06 && Math.abs(t.y - (customsZone.y + 1.0)) < .06){
             t.targetPhase = "processing";
-            t.processTimer = 1.2 + Math.min(1.2, state.day * 0.04);
+            t.processTimer = 1.2 + Math.min(1.4, pressure * 0.06);
             state.coins += t.cargo * 7;
             state.reputation = Math.min(100, state.reputation + 0.7);
             emitCoins(t.x, t.y, 3);
@@ -1389,9 +1236,8 @@
     if(state.yardStored > state.yardCapacity) state.yardStored = state.yardCapacity;
 
     const queueCount = map.ships.filter(s => s.phase === "waiting").length;
-    const pressure = Math.min(12, state.day * 0.14);
-    if(state.yardStored >= state.yardCapacity) state.reputation -= dt * (3.7 + pressure * 0.3);
-    if(queueCount >= 5) state.reputation -= dt * (1.9 + pressure * 0.18);
+    if(state.yardStored >= state.yardCapacity) state.reputation -= dt * (3.8 + pressure * 0.34);
+    if(queueCount >= 5) state.reputation -= dt * (1.9 + pressure * 0.2);
 
     for(const p of map.particles){
       p.x += p.vx * dt;
@@ -1411,7 +1257,7 @@
     updateUI();
   }
 
-  async function checkLoseConditions(){
+  function checkLoseConditions(){
     if (state.gameOver) return;
 
     const reasons = [];
@@ -1426,13 +1272,13 @@
       state.reputation = Math.max(0, state.reputation);
       state.gameOver = true;
       state.loseReasons = [...new Set(reasons)];
-      await addLeaderboardEntry(state.nickname, state.coins, state.day);
-      errorSound();
-      ui.gameOverMeta.textContent = `Captain ${state.nickname} · Coins ${Math.floor(state.coins)} · Day ${state.day}`;
+      addLeaderboardEntry(state.nickname, state.processedContainers, state.coins);
+      ui.gameOverMeta.textContent = `Captain ${state.nickname} · Containers ${Math.floor(state.processedContainers)} · Coins ${Math.floor(state.coins)}`;
       ui.gameOverReasons.innerHTML = state.loseReasons.map(r => `<li>${escapeHtml(r)}</li>`).join("");
       ui.gameOverPanel.classList.remove("hidden");
+      errorSound();
       showToast(`Port collapsed: ${state.loseReasons.join(" • ")}`, 2400);
-      await renderLeaderboard();
+      renderLeaderboard();
     }
   }
 
@@ -1483,7 +1329,6 @@
       drawDiamond(p.x, p.y, iso.tileW*.8, iso.tileH*.65, b.active ? COLORS.berth : "rgba(100,100,100,.45)");
 
       if(!b.active) return;
-
       const scale = iso.zoom;
       ctx.save();
       ctx.translate(p.x, p.y);
@@ -1533,59 +1378,36 @@
       const scale = iso.zoom;
       ctx.save();
       ctx.translate(sx, sy);
-
       ctx.fillStyle = COLORS.shadow;
       ctx.beginPath();
       ctx.ellipse(0, 12*scale, 42*scale, 12*scale, 0, 0, Math.PI*2);
       ctx.fill();
 
-      ctx.fillStyle = "#ff4c4c";
+      ctx.fillStyle = "#bfcad8";
       ctx.beginPath();
-      ctx.moveTo(-42*ship.length*scale, 3*scale);
-      ctx.lineTo(26*ship.length*scale, 3*scale);
-      ctx.lineTo(42*ship.length*scale, -5*scale);
-      ctx.lineTo(30*ship.length*scale, 14*scale);
-      ctx.lineTo(-30*ship.length*scale, 14*scale);
-      ctx.lineTo(-42*ship.length*scale, 6*scale);
+      ctx.moveTo(-42*ship.length*scale, 0);
+      ctx.lineTo(28*ship.length*scale, -8*scale);
+      ctx.lineTo(42*ship.length*scale, 0);
+      ctx.lineTo(28*ship.length*scale, 8*scale);
+      ctx.lineTo(-42*ship.length*scale, 8*scale);
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = "#20c1cb";
-      ctx.beginPath();
-      ctx.moveTo(-34*ship.length*scale, 14*scale);
-      ctx.lineTo(24*ship.length*scale, 14*scale);
-      ctx.lineTo(18*ship.length*scale, 22*scale);
-      ctx.lineTo(-40*ship.length*scale, 22*scale);
-      ctx.closePath();
-      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-8*scale, -12*scale, 24*scale, 10*scale);
 
-      ctx.fillStyle = "#b9c8d8";
-      ctx.fillRect(-24*scale, -18*scale, 16*scale, 34*scale);
-      ctx.fillStyle = "#a5bccf";
-      ctx.fillRect(-8*scale, -18*scale, 12*scale, 34*scale);
-      ctx.fillStyle = "#b8b8b8";
-      ctx.fillRect(-30*scale, 0, 34*scale, 8*scale);
-      ctx.fillStyle = "#d9d9d9";
-      ctx.fillRect(-18*scale, -28*scale, 6*scale, 10*scale);
-
-      const contColors = [COLORS.B, COLORS.C];
-      const contCount = Math.min(ship.unloading, 5);
-      for(let i=0;i<contCount;i++){
-        const row = i < 2 ? 0 : 1;
-        const idx = i < 2 ? i : i - 2;
-        const x = (4 + idx * 14 + row * 6) * scale;
-        const y = (-10 + row * 14) * scale;
-        ctx.fillStyle = contColors[(i + row) % contColors.length];
-        ctx.fillRect(x, y, 14*scale, 14*scale);
+      for(let i=0;i<Math.min(ship.unloading,6);i++){
+        ctx.fillStyle = COLORS[ship.cargoType];
+        ctx.fillRect((-26 + i*8)*scale, -4*scale, 7*scale, 6*scale);
       }
 
       ctx.fillStyle = COLORS.text;
       ctx.font = `700 ${Math.max(10,11*scale)}px Inter, sans-serif`;
-      ctx.fillText(ship.unloading.toString(), -2*scale, -24*scale);
+      ctx.fillText(ship.unloading.toString(), -4*scale, -18*scale);
 
       if(ship.phase === "waiting"){
         ctx.strokeStyle = "rgba(255,255,255,.2)";
-        ctx.strokeRect(-52*scale, -32*scale, 104*scale, 60*scale);
+        ctx.strokeRect(-50*scale, -30*scale, 100*scale, 56*scale);
       }
       ctx.restore();
     });
@@ -1662,7 +1484,7 @@
   function drawFloatTexts(){
     map.floatTexts.forEach(f => {
       const sp = toScreen(f.x, f.y);
-      ctx.globalAlpha = Math.max(0, Math.min(1, f.life / 1.4));
+      ctx.globalAlpha = Math.max(0, Math.min(1, f.life / 1.6));
       ctx.fillStyle = f.color;
       ctx.font = `900 ${Math.max(12, f.size * iso.zoom)}px Inter, sans-serif`;
       ctx.fillText(f.text, sp.x, sp.y);
@@ -1687,6 +1509,164 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(r.x, r.y, r.w, r.h);
     }
+  }
+
+  async function shareScoreCard() {
+    const size = 1080;
+    const c = document.createElement("canvas");
+    c.width = size;
+    c.height = size;
+    const g = c.getContext("2d");
+
+    const emoji = rand(mood);
+    const processed = Math.floor(state.processedContainers);
+    const coins = Math.floor(state.coins);
+    const nick = state.nickname || "Captain";
+
+    const grad = g.createLinearGradient(0,0,0,size);
+    grad.addColorStop(0, "#143555");
+    grad.addColorStop(1, "#0a1725");
+    g.fillStyle = grad;
+    g.fillRect(0,0,size,size);
+
+    g.fillStyle = "rgba(255,255,255,0.06)";
+    g.beginPath();
+    g.arc(860,220,190,0,Math.PI*2);
+    g.fill();
+    g.beginPath();
+    g.arc(230,880,170,0,Math.PI*2);
+    g.fill();
+
+    g.fillStyle = "rgba(255,255,255,0.08)";
+    roundRect(g, 80, 80, 920, 920, 48);
+    g.fill();
+
+    drawLogoCard(g, 140, 140, 150);
+
+    g.fillStyle = "#e9f2ff";
+    g.font = "900 72px Inter, Arial, sans-serif";
+    g.fillText("Ports Captain", 320, 210);
+
+    g.fillStyle = "#9bb4d0";
+    g.font = "700 34px Inter, Arial, sans-serif";
+    g.fillText("Port survival challenge", 320, 258);
+
+    g.fillStyle = "rgba(255,255,255,0.06)";
+    roundRect(g, 140, 330, 800, 330, 38);
+    g.fill();
+
+    g.fillStyle = "#ffcf5b";
+    g.font = "900 110px Inter, Arial, sans-serif";
+    g.fillText(String(processed), 180, 485);
+
+    g.fillStyle = "#e9f2ff";
+    g.font = "800 54px Inter, Arial, sans-serif";
+    g.fillText(`I processed ${processed} containers ${emoji}`, 180, 580);
+
+    g.fillStyle = "#9bb4d0";
+    g.font = "700 42px Inter, Arial, sans-serif";
+    g.fillText(`- Captain ${nick}`, 180, 655);
+
+    g.fillStyle = "rgba(255,255,255,0.06)";
+    roundRect(g, 140, 720, 800, 160, 30);
+    g.fill();
+
+    g.fillStyle = "#e9f2ff";
+    g.font = "800 42px Inter, Arial, sans-serif";
+    g.fillText(`Coins: ${coins}`, 180, 810);
+
+    g.fillStyle = "#9bb4d0";
+    g.font = "700 28px Inter, Arial, sans-serif";
+    g.fillText("Built in Ports Captain", 180, 860);
+
+    const blob = await new Promise(resolve => c.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("blob failed");
+
+    const file = new File([blob], "ports-captain-score.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "Ports Captain Score",
+        text: `I processed ${processed} containers in Ports Captain ${emoji}`
+      });
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ports-captain-score.png";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    showToast("Score image downloaded");
+  }
+
+  function roundRect(g, x, y, w, h, r) {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+
+  function drawLogoCard(g, x, y, s) {
+    g.save();
+    g.translate(x, y);
+    g.fillStyle = "#174061";
+    roundRect(g, 0, 0, s, s, 28);
+    g.fill();
+
+    g.fillStyle = "#41c5cf";
+    g.save();
+    g.translate(0,0);
+    g.beginPath();
+    g.roundRect(12, s-38, s-24, 20, 10);
+    g.fill();
+    g.restore();
+
+    g.fillStyle = "#ff4b4b";
+    g.beginPath();
+    g.moveTo(12, s-64);
+    g.lineTo(s-30, s-64);
+    g.lineTo(s-24, s-74);
+    g.lineTo(s-12, s-74);
+    g.lineTo(s-34, s-18);
+    g.lineTo(26, s-18);
+    g.lineTo(12, s-44);
+    g.closePath();
+    g.fill();
+
+    g.fillStyle = "#f21f1f";
+    g.beginPath();
+    g.moveTo(s-34, s-18);
+    g.lineTo(s-12, s-74);
+    g.lineTo(s-2, s-74);
+    g.lineTo(s-22, s-18);
+    g.closePath();
+    g.fill();
+
+    g.fillStyle = "#b9c8d8";
+    g.fillRect(22, 46, 22, 56);
+    g.fillStyle = "#a5bccf";
+    g.fillRect(44, 46, 20, 56);
+    g.fillStyle = "#b8b8b8";
+    g.fillRect(22, 70, 46, 10);
+    g.fillStyle = "#d9d9d9";
+    g.fillRect(34, 28, 8, 18);
+
+    g.fillStyle = "#f0b865";
+    g.fillRect(86, 58, 30, 34);
+    g.fillStyle = "#e4a355";
+    g.fillRect(116, 58, 26, 34);
+    g.fillStyle = "#e4a355";
+    g.fillRect(86, 92, 30, 22);
+    g.fillStyle = "#f0b865";
+    g.fillRect(116, 92, 26, 22);
+    g.fillStyle = "#e4a355";
+    g.fillRect(142, 92, 22, 22);
+    g.restore();
   }
 
   function frame(ts){
