@@ -307,7 +307,7 @@
   <div id="splashScreen" class="screen">
     <div class="menuCard" style="text-align:center">
       <div class="logoWrap">
-        <img class="logoImg" src="menu-icon.png" alt="Ports Captain icon" />
+        <img class="logoImg" src="..\menu-icon.png" alt="Ports Captain icon" />
       </div>
       <h1 class="title">Ports Captain</h1>
       <p class="subtitle">Build, berth, unload, clear, dispatch — and survive the flow.</p>
@@ -321,7 +321,7 @@
   <div id="menuScreen" class="screen hidden">
     <div class="menuCard">
       <div class="logoWrap">
-        <img class="logoImg" src="menu-icon.png" alt="Ports Captain icon" />
+        <img class="logoImg" src="..\menu-icon.png" alt="Ports Captain icon" />
         <div>
           <h1 class="title" style="font-size:38px">Ports Captain</h1>
           <p class="subtitle" style="text-align:left">Welcome aboard, Captain.</p>
@@ -1705,7 +1705,7 @@
     g.fill();
 
     try {
-      const img = await loadImage("menu-icon.png");
+      const img = await loadImage("..\menu-icon.png");
       g.save();
       g.beginPath();
       roundRect(g, 140, 140, 150, 150, 28);
