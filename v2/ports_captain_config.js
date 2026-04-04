@@ -5,7 +5,7 @@ window.PORTS_CAPTAIN_CONFIG = {
     publishableKey: "sb_publishable_7AKqIL5WblOjE2ba8NDY_w_tOLbwVR-",
     table: "ports_captain_scores",
     fallbackToLocal: true,
-    topN: 25
+    topN: 10
   },
 
   game: {
