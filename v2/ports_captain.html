@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
   <title>Ports Captain</title>
   <style>
     :root{
@@ -32,6 +32,7 @@
       --containerC:#69db7c;
       --shadow:rgba(0,0,0,.22);
     }
+
     *{box-sizing:border-box}
     html,body{
       margin:0;height:100%;overflow:hidden;
@@ -40,7 +41,9 @@
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       touch-action:none;
     }
+
     #app,#gameWrap{position:relative;width:100vw;height:100vh;overflow:hidden}
+
     canvas{
       display:block;width:100%;height:100%;
       background:
@@ -48,6 +51,7 @@
         linear-gradient(180deg,#235c89 0%,#183d60 55%,#10253c 100%);
       touch-action:none;
     }
+
     .panel{
       background:var(--panel);
       border:1px solid var(--panel-border);
@@ -55,6 +59,7 @@
       backdrop-filter:blur(10px);
       box-shadow:0 8px 24px rgba(0,0,0,.24);
     }
+
     .screen{
       position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;
       background:
@@ -64,7 +69,9 @@
       overflow:auto;
       -webkit-overflow-scrolling:touch;
     }
+
     .hidden{display:none !important}
+
     .menuCard{
       width:min(760px,100%);
       padding:20px;
@@ -74,9 +81,11 @@
       border-radius:24px;
       box-shadow:0 22px 60px rgba(0,0,0,.35);
     }
+
     .logoWrap{
       display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:12px
     }
+
     .logoImg{
       width:104px;height:104px;border-radius:22px;object-fit:cover;flex:none;
       border:1px solid rgba(255,255,255,.14);
@@ -91,16 +100,20 @@
     .stack{display:flex;flex-direction:column;gap:10px}
     .field{display:flex;flex-direction:column;gap:6px}
     label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+
     input[type="text"]{
       width:100%;padding:12px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.06);color:var(--text);font-size:15px;font-weight:700
     }
+
     .menuButtons,.rowBtns{display:flex;gap:8px;flex-wrap:wrap}
+
     button{
       appearance:none;border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.07);color:var(--text);border-radius:12px;
       padding:9px 11px;font-weight:800;font-size:12px;cursor:pointer;min-height:34px;line-height:1.15;
     }
+
     button.primary{background:linear-gradient(180deg,#2d83bd,#1c5c87)}
     button.bigStart{
       min-height:52px;
@@ -108,11 +121,21 @@
       font-size:18px;
       border-radius:16px;
     }
+
     button:active{transform:translateY(1px)}
+    button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+      pointer-events:none;
+    }
+
     .tiny{font-size:11px;color:var(--muted)}
+
     .howTo{
       background:rgba(255,255,255,.04);border-radius:16px;padding:12px;line-height:1.45;color:#dbe8f8;font-size:13px;
     }
+
     .leaderTable{
       width:100%;border-collapse:collapse;margin-top:8px;font-size:13px
     }
@@ -123,16 +146,21 @@
     .credits{margin-top:16px;text-align:center;color:var(--muted);font-size:11px}
 
     .hud{
-      position:absolute;left:6px;right:6px;top:6px;
+      position:absolute;
+      left:6px;right:6px;
+      top:calc(6px + env(safe-area-inset-top, 0px));
       display:grid;grid-template-columns:1fr auto;gap:6px;pointer-events:none;z-index:4
     }
+
     .stats{
       padding:6px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;pointer-events:auto;
     }
+
     .stat{
       min-width:0;padding:5px 6px;border-radius:10px;background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.06)
     }
+
     .statTop{display:flex;align-items:center;justify-content:space-between;gap:5px}
     .iconLabel{display:flex;align-items:center;gap:5px;min-width:0}
     .icon{
@@ -144,6 +172,7 @@
       white-space:nowrap;overflow:hidden;text-overflow:ellipsis
     }
     .value{font-size:14px;font-weight:900}
+
     .bar{
       width:100%;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:5px
     }
@@ -154,6 +183,7 @@
     .burgerBtn{
       padding:8px 10px;font-size:14px;min-height:32px;min-width:42px;
     }
+
     .popupMenu{
       position:absolute;top:40px;right:0;display:flex;flex-direction:column;gap:6px;
       min-width:124px;padding:6px;
@@ -162,40 +192,61 @@
       border-radius:12px;
       box-shadow:0 10px 26px rgba(0,0,0,.28);
     }
+
     .popupMenu button{
       width:100%;text-align:left;font-size:11px;min-height:32px;padding:8px 10px;
     }
 
     .bottomBar{
-      position:absolute;left:6px;right:6px;bottom:6px;
+      position:absolute;
+      left:6px;right:6px;
+      bottom:calc(6px + env(safe-area-inset-bottom, 0px));
       display:grid;grid-template-columns:1fr;gap:6px;pointer-events:none;z-index:4
     }
-    .controls{
-      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:6px;pointer-events:auto
-    }
+
+	.controls{
+	  display:grid;
+	  grid-template-columns:repeat(4, minmax(0, 1fr));
+	  gap:6px;
+	  padding:6px;
+	  pointer-events:auto;
+	  width:100%;
+	}
+    .controls::-webkit-scrollbar{display:none}
+
+    .controls button{
+	  width:100%;
+	  min-width:0;
+	  max-width:none;
+	}
+
     .controls button small{
       display:block;color:var(--muted);font-weight:700;margin-top:1px;font-size:10px
     }
+
     .tips{
       padding:7px 10px;font-size:12px;color:var(--muted);pointer-events:auto
     }
+
     .toast{
       position:absolute;left:50%;transform:translateX(-50%);
-      bottom:112px;background:rgba(10,16,24,.92);color:#fff;
+      bottom:calc(112px + env(safe-area-inset-bottom, 0px));
+      background:rgba(10,16,24,.92);color:#fff;
       border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 12px;
       box-shadow:0 10px 24px rgba(0,0,0,.24);font-weight:800;font-size:12px;opacity:0;pointer-events:none;
       transition:opacity .2s ease;z-index:10;max-width:min(92vw,600px);text-align:center
     }
     .toast.show{opacity:1}
+
     .legend{
-      position:absolute;right:6px;bottom:108px;width:min(250px,calc(100vw - 12px));
+      position:absolute;right:6px;bottom:calc(108px + env(safe-area-inset-bottom, 0px));width:min(250px,calc(100vw - 12px));
       padding:8px 10px;font-size:11px;line-height:1.35;color:var(--muted);z-index:4
     }
     .legend b{color:var(--text)}
     .menuConfirming{color:#ffd166}
 
     .gameOverPanel{
-      position:absolute;left:50%;top:18px;transform:translateX(-50%);
+      position:absolute;left:50%;top:calc(18px + env(safe-area-inset-top, 0px));transform:translateX(-50%);
       width:min(430px,92vw);padding:18px;z-index:12;
       background:rgba(7,14,22,.96);border:1px solid rgba(255,255,255,.13);border-radius:20px;
       box-shadow:0 20px 50px rgba(0,0,0,.35);text-align:left;
@@ -210,11 +261,36 @@
       .grid2{grid-template-columns:1fr}
       .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
     }
-    @media (max-width:640px){
-      .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
-      .legend{display:none}
-      .menuCard{padding:14px}
-    }
+
+	@media (max-width:640px){
+	  .legend{display:none}
+	  .menuCard{padding:14px}
+	  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+	  .controls{
+	    display:flex;
+	    overflow-x:auto;
+	    overflow-y:hidden;
+	    -webkit-overflow-scrolling:touch;
+	    scrollbar-width:none;
+	  }
+	  .controls::-webkit-scrollbar{display:none}
+	  .controls button{
+	    flex:1 0 112px;
+	    min-width:112px;
+	  }
+	  .value{font-size:13px}
+	}
+
+	@media (max-width:390px){
+	  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+	  .controls button{
+	    flex:1 0 106px;
+	    min-width:106px;
+	    font-size:11px;
+	  }
+	  .controls button small{font-size:9px}
+	}    
+    
   </style>
 </head>
 <body>
@@ -229,7 +305,7 @@
       <div style="margin-top:18px">
         <button id="enterBtn" class="primary bigStart">▶ Start Game</button>
       </div>
-      <div class="credits">By: Loay Abu Qaoud 2026 · Version 1.0</div>
+      <div class="credits">By: Loay Abu Qaoud 2026 · Version 2.0</div>
     </div>
   </div>
 
@@ -246,7 +322,7 @@
       <div class="grid2">
         <div class="stack">
           <div class="field">
-            <label for="nicknameInput">Hi, Captain ________</label>
+            <label for="nicknameInput">Hi, Captain</label>
             <input id="nicknameInput" type="text" maxlength="18" placeholder="Enter your nickname" />
           </div>
 
@@ -289,7 +365,7 @@
         </div>
       </div>
 
-      <div class="credits">By: Loay Abu Qaoud 2026 · Version 1.0</div>
+      <div class="credits">By: Loay Abu Qaoud 2026 · Version 2.0</div>
     </div>
   </div>
 
@@ -377,7 +453,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="ports_captain_config.js"></script>
 <script>
 (() => {
@@ -517,6 +593,18 @@
     localStorage.setItem(STORAGE_KEYS.sound, String(v));
   }
 
+  function setGameplayButtonsEnabled(enabled) {
+    ui.buyBerthBtn.disabled = !enabled;
+    ui.buyCraneBtn.disabled = !enabled;
+    ui.buyYardBtn.disabled = !enabled;
+    ui.buyTruckBtn.disabled = !enabled;
+    ui.burgerBtn.disabled = !enabled;
+    ui.pauseBtn.disabled = !enabled;
+    ui.soundBtn.disabled = !enabled;
+    ui.menuBtn.disabled = !enabled;
+    if (!enabled) ui.popupMenu.classList.add("hidden");
+  }
+
   function getLocalLeaderboard() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.leaderboard) || "[]"); }
     catch { return []; }
@@ -539,7 +627,7 @@
   }
 
   async function fetchRemoteLeaderboard() {
-    if (!SUPA) throw new Error("Supabase not configured");
+    if (!SUPA) throw new Error("Online leaderboard not configured");
 
     const { data, error } = await SUPA
       .from(CFG.supabase.table)
@@ -560,7 +648,7 @@
   }
 
   async function insertRemoteLeaderboardEntry(name, containers, coins) {
-    if (!SUPA) throw new Error("Supabase not configured");
+    if (!SUPA) throw new Error("Online leaderboard not configured");
 
     const payload = {
       player_name: String(name || "Captain").slice(0, 18),
@@ -581,7 +669,7 @@
         await insertRemoteLeaderboardEntry(name, containers, coins);
         return;
       } catch (err) {
-        console.error("Supabase insert failed:", err);
+        console.error("Online insert failed:", err);
         if (!CFG.supabase.fallbackToLocal) throw err;
       }
     }
@@ -593,17 +681,20 @@
 
     if (SUPA) {
       try {
-        leaderboardModeLabel.textContent = "Mode: Online Supabase leaderboard";
+        leaderboardModeLabel.textContent = "Mode: Online leaderboard";
+        clearLeaderBtn.classList.add("hidden");
         list = await fetchRemoteLeaderboard();
       } catch (err) {
-        console.error("Supabase fetch failed:", err);
+        console.error("Online fetch failed:", err);
         list = CFG.supabase.fallbackToLocal ? getLocalLeaderboard() : [];
+        clearLeaderBtn.classList.remove("hidden");
         leaderboardModeLabel.textContent = CFG.supabase.fallbackToLocal
-          ? "Mode: Supabase failed, using local cache"
-          : "Mode: Supabase failed";
+          ? "Mode: Online unavailable, using local cache"
+          : "Mode: Online unavailable";
       }
     } else {
       list = getLocalLeaderboard();
+      clearLeaderBtn.classList.remove("hidden");
       leaderboardModeLabel.textContent = "Mode: Local browser leaderboard";
     }
 
@@ -696,6 +787,7 @@
   });
 
   ui.burgerBtn.addEventListener("click", () => {
+    if (ui.burgerBtn.disabled) return;
     ui.popupMenu.classList.toggle("hidden");
   });
 
@@ -706,6 +798,7 @@
   });
 
   async function startMenuConfirm() {
+    if (ui.menuBtn.disabled) return;
     if (ui.menuBtn.dataset.confirming === "1") {
       clearTimeout(menuConfirmTimer);
       ui.menuBtn.dataset.confirming = "0";
@@ -806,6 +899,7 @@
     map.lastPenaltyReason = "";
     initWorld();
     setZoom(1, true);
+    setGameplayButtonsEnabled(true);
     updateUI();
     showToast(`Welcome, Captain ${state.nickname}!`);
   }
@@ -877,6 +971,7 @@
   function addFloatText(anchorShip,text,color="#fff",life,size=14){
     map.floatTexts.push({anchorShip,text,color,life,size});
   }
+
   function emitCoins(x,y,n=4){
     for(let i=0;i<n;i++){
       map.particles.push({
@@ -983,22 +1078,27 @@
     const p = toScreen(ship.x, ship.y);
     return {x:p.x - 54*iso.zoom, y:p.y - 38*iso.zoom, w:110*iso.zoom, h:60*iso.zoom};
   }
+
   function truckScreenRect(truck){
     const p = toScreen(truck.x, truck.y);
     return {x:p.x - 34*iso.zoom, y:p.y - 34*iso.zoom, w:76*iso.zoom, h:68*iso.zoom};
   }
+
   function berthDropRect(berth){
     const p = toScreen(berth.x, berth.y);
     return {x:p.x - 50*iso.zoom, y:p.y - 32*iso.zoom, w:100*iso.zoom, h:52*iso.zoom};
   }
+
   function customsScreenRect(){
     const p = toScreen(customsZone.x, customsZone.y);
     return {x:p.x - 50*iso.zoom, y:p.y - 15*iso.zoom, w:150*iso.zoom, h:100*iso.zoom};
   }
+
   function screenToCanvas(e){
     const rect = canvas.getBoundingClientRect();
     return { x:(e.clientX - rect.left), y:(e.clientY - rect.top) };
   }
+
   function findHit(px,py){
     for(let i=map.ships.length - 1; i>=0; i--){
       const s = map.ships[i];
@@ -1313,6 +1413,7 @@
     if(reasons.length){
       state.gameOver = true;
       state.loseReasons = [...new Set(reasons)];
+      setGameplayButtonsEnabled(false);
 
       try {
         await addLeaderboardEntry(state.nickname, state.processedContainers, state.coins);
