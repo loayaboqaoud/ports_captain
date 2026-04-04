@@ -263,33 +263,42 @@
     }
 
 	@media (max-width:640px){
-	  .legend{display:none}
-	  .menuCard{padding:14px}
-	  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-	  .controls{
-	    display:flex;
-	    overflow-x:auto;
-	    overflow-y:hidden;
-	    -webkit-overflow-scrolling:touch;
-	    scrollbar-width:none;
-	  }
-	  .controls::-webkit-scrollbar{display:none}
-	  .controls button{
-	    flex:1 0 112px;
-	    min-width:112px;
-	  }
-	  .value{font-size:13px}
-	}
+  .legend{display:none}
+  .menuCard{padding:14px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .controls{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:6px;
+    overflow:visible;
+    width:100%;
+  }
+  .controls button{
+    width:100%;
+    min-width:0;
+    max-width:none;
+    padding:8px 6px;
+    font-size:11px;
+  }
+  .controls button small{
+    font-size:9px;
+  }
+  .value{font-size:13px}
+}
 
-	@media (max-width:390px){
-	  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-	  .controls button{
-	    flex:1 0 106px;
-	    min-width:106px;
-	    font-size:11px;
-	  }
-	  .controls button small{font-size:9px}
-	}    
+@media (max-width:390px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .controls{
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+  }
+  .controls button{
+    font-size:10px;
+    padding:7px 4px;
+  }
+  .controls button small{
+    font-size:8px;
+  }
+}
     
   </style>
 </head>
@@ -298,7 +307,7 @@
   <div id="splashScreen" class="screen">
     <div class="menuCard" style="text-align:center">
       <div class="logoWrap">
-        <img class="logoImg" src="../menu-icon.png" alt="Ports Captain icon" />
+        <img class="logoImg" src="menu-icon.png" alt="Ports Captain icon" />
       </div>
       <h1 class="title">Ports Captain</h1>
       <p class="subtitle">Build, berth, unload, clear, dispatch — and survive the flow.</p>
@@ -312,7 +321,7 @@
   <div id="menuScreen" class="screen hidden">
     <div class="menuCard">
       <div class="logoWrap">
-        <img class="logoImg" src="../menu-icon.png" alt="Ports Captain icon" />
+        <img class="logoImg" src="menu-icon.png" alt="Ports Captain icon" />
         <div>
           <h1 class="title" style="font-size:38px">Ports Captain</h1>
           <p class="subtitle" style="text-align:left">Welcome aboard, Captain.</p>
@@ -1696,7 +1705,7 @@
     g.fill();
 
     try {
-      const img = await loadImage("../menu-icon.png");
+      const img = await loadImage("menu-icon.png");
       g.save();
       g.beginPath();
       roundRect(g, 140, 140, 150, 150, 28);
