@@ -254,7 +254,7 @@
             <label>Settings</label>
             <div class="rowBtns">
               <button id="toggleSoundMenuBtn">🔊 Sound: On</button>
-              <button id="clearLeaderBtn">🧹 Clear Scores</button>
+              <button id="clearLeaderBtn">🧹 Clear Local Cache</button>
             </div>
           </div>
 
@@ -284,7 +284,7 @@
               </thead>
               <tbody></tbody>
             </table>
-            <div class="tiny">Mode: Local browser leaderboard</div>
+            <div class="tiny" id="leaderboardModeLabel">Mode: Loading…</div>
           </div>
         </div>
       </div>
@@ -377,6 +377,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="ports_captain_config.js"></script>
 <script>
 (() => {
@@ -401,6 +402,7 @@
   const clearLeaderBtn = document.getElementById("clearLeaderBtn");
   const startGameBtn = document.getElementById("startGameBtn");
   const leaderTableBody = document.querySelector("#leaderTable tbody");
+  const leaderboardModeLabel = document.getElementById("leaderboardModeLabel");
 
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
@@ -494,6 +496,13 @@
 
   const customsZone = { x:8.5, y:2.6, w:2.2, h:1.5 };
 
+  const SUPA = (() => {
+    const cfg = CFG.supabase || {};
+    if (!cfg.enabled) return null;
+    if (!window.supabase || !cfg.url || !cfg.publishableKey) return null;
+    return window.supabase.createClient(cfg.url, cfg.publishableKey);
+  })();
+
   function getStoredNickname() {
     return (localStorage.getItem(STORAGE_KEYS.nickname) || "").trim();
   }
@@ -508,15 +517,17 @@
     localStorage.setItem(STORAGE_KEYS.sound, String(v));
   }
 
-  function getLeaderboard() {
+  function getLocalLeaderboard() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.leaderboard) || "[]"); }
     catch { return []; }
   }
-  function saveLeaderboard(items) {
+
+  function saveLocalLeaderboard(items) {
     localStorage.setItem(STORAGE_KEYS.leaderboard, JSON.stringify(items));
   }
-  function addLeaderboardEntry(name, containers, coins) {
-    const list = getLeaderboard();
+
+  function addLocalLeaderboardEntry(name, containers, coins) {
+    const list = getLocalLeaderboard();
     list.push({
       name: name || "Captain",
       containers: Math.floor(containers),
@@ -524,23 +535,94 @@
       at: Date.now()
     });
     list.sort((a,b) => b.containers - a.containers || b.coins - a.coins || a.at - b.at);
-    saveLeaderboard(list.slice(0, 25));
+    saveLocalLeaderboard(list.slice(0, CFG.supabase?.topN || 25));
   }
-  function renderLeaderboard() {
-    const list = getLeaderboard();
+
+  async function fetchRemoteLeaderboard() {
+    if (!SUPA) throw new Error("Supabase not configured");
+
+    const { data, error } = await SUPA
+      .from(CFG.supabase.table)
+      .select("player_name, containers, coins, created_at")
+      .order("containers", { ascending: false })
+      .order("coins", { ascending: false })
+      .order("created_at", { ascending: true })
+      .limit(CFG.supabase.topN || 25);
+
+    if (error) throw error;
+
+    return (data || []).map(row => ({
+      name: row.player_name,
+      containers: row.containers,
+      coins: row.coins,
+      at: row.created_at ? new Date(row.created_at).getTime() : Date.now()
+    }));
+  }
+
+  async function insertRemoteLeaderboardEntry(name, containers, coins) {
+    if (!SUPA) throw new Error("Supabase not configured");
+
+    const payload = {
+      player_name: String(name || "Captain").slice(0, 18),
+      containers: Math.max(0, Math.floor(containers || 0)),
+      coins: Math.max(0, Math.floor(coins || 0))
+    };
+
+    const { error } = await SUPA
+      .from(CFG.supabase.table)
+      .insert([payload]);
+
+    if (error) throw error;
+  }
+
+  async function addLeaderboardEntry(name, containers, coins) {
+    if (SUPA) {
+      try {
+        await insertRemoteLeaderboardEntry(name, containers, coins);
+        return;
+      } catch (err) {
+        console.error("Supabase insert failed:", err);
+        if (!CFG.supabase.fallbackToLocal) throw err;
+      }
+    }
+    addLocalLeaderboardEntry(name, containers, coins);
+  }
+
+  async function renderLeaderboard() {
+    let list = [];
+
+    if (SUPA) {
+      try {
+        leaderboardModeLabel.textContent = "Mode: Online Supabase leaderboard";
+        list = await fetchRemoteLeaderboard();
+      } catch (err) {
+        console.error("Supabase fetch failed:", err);
+        list = CFG.supabase.fallbackToLocal ? getLocalLeaderboard() : [];
+        leaderboardModeLabel.textContent = CFG.supabase.fallbackToLocal
+          ? "Mode: Supabase failed, using local cache"
+          : "Mode: Supabase failed";
+      }
+    } else {
+      list = getLocalLeaderboard();
+      leaderboardModeLabel.textContent = "Mode: Local browser leaderboard";
+    }
+
     leaderTableBody.innerHTML = "";
+
     if (!list.length) {
       const tr = document.createElement("tr");
       tr.innerHTML = '<td colspan="4" class="tiny">No scores yet.</td>';
       leaderTableBody.appendChild(tr);
       return;
     }
+
     list.forEach((r, i) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `<td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.containers}</td><td>${r.coins}</td>`;
       leaderTableBody.appendChild(tr);
     });
   }
+
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, ch => ({
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -581,7 +663,6 @@
 
   nicknameInput.value = state.nickname;
   toggleSoundMenuBtn.textContent = `🔊 Sound: ${soundEnabled ? "On" : "Off"}`;
-  renderLeaderboard();
 
   enterBtn.addEventListener("click", () => showScreen("menu"));
 
@@ -593,9 +674,9 @@
     if (soundEnabled) beep(660,0.06);
   });
 
-  clearLeaderBtn.addEventListener("click", () => {
-    saveLeaderboard([]);
-    renderLeaderboard();
+  clearLeaderBtn.addEventListener("click", async () => {
+    saveLocalLeaderboard([]);
+    await renderLeaderboard();
   });
 
   startGameBtn.addEventListener("click", () => {
@@ -604,9 +685,9 @@
     startGame();
   });
 
-  ui.goMenuAfterLossBtn.addEventListener("click", () => {
+  ui.goMenuAfterLossBtn.addEventListener("click", async () => {
     showScreen("menu");
-    renderLeaderboard();
+    await renderLeaderboard();
   });
 
   ui.shareScoreBtn.addEventListener("click", async () => {
@@ -624,7 +705,7 @@
     }
   });
 
-  function startMenuConfirm() {
+  async function startMenuConfirm() {
     if (ui.menuBtn.dataset.confirming === "1") {
       clearTimeout(menuConfirmTimer);
       ui.menuBtn.dataset.confirming = "0";
@@ -632,7 +713,7 @@
       ui.menuBtn.textContent = "🏠 Menu";
       ui.popupMenu.classList.add("hidden");
       showScreen("menu");
-      renderLeaderboard();
+      await renderLeaderboard();
       return;
     }
     ui.menuBtn.dataset.confirming = "1";
@@ -1216,7 +1297,7 @@
     updateUI();
   }
 
-  function checkLoseConditions(){
+  async function checkLoseConditions(){
     if (state.gameOver) return;
 
     const reasons = [];
@@ -1232,13 +1313,24 @@
     if(reasons.length){
       state.gameOver = true;
       state.loseReasons = [...new Set(reasons)];
-      addLeaderboardEntry(state.nickname, state.processedContainers, state.coins);
+
+      try {
+        await addLeaderboardEntry(state.nickname, state.processedContainers, state.coins);
+      } catch (err) {
+        console.error("Leaderboard save failed:", err);
+      }
+
       ui.gameOverMeta.textContent = `Captain ${state.nickname} · Containers ${Math.floor(state.processedContainers)} · Coins ${Math.floor(state.coins)}`;
       ui.gameOverReasons.innerHTML = state.loseReasons.map(r => `<li>${escapeHtml(r)}</li>`).join("");
       ui.gameOverPanel.classList.remove("hidden");
       errorSound();
       showToast(`Port collapsed: ${state.loseReasons.join(" • ")}`, CFG.game.ui.gameOverToastMs);
-      renderLeaderboard();
+
+      try {
+        await renderLeaderboard();
+      } catch (err) {
+        console.error("Leaderboard refresh failed:", err);
+      }
     }
   }
 
